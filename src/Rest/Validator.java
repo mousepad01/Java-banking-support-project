@@ -28,7 +28,7 @@ public class Validator {
         return ageOk((int)(milisecAge / ((long)365 * 24 * 60 * 60 * 1000)));
     }
 
-    public static boolean idOk(String toCheck){
+    public static boolean personIdOk(String toCheck){
         return toCheck.matches("[0-9]{12}");
     }
 
@@ -54,5 +54,13 @@ public class Validator {
     public static boolean futureDateOk(String toCheck){
 
         return futureDateOk(Date.valueOf(toCheck));
+    }
+
+    public static boolean accountIdOk(String toCheck){
+        return toCheck.matches("[a-z]{2}[0-9]{8}");
+    }
+
+    public static boolean cardIdOk(String toCheck){
+        return toCheck.matches("[a-z]{2}[0-9]{8}");
     }
 }

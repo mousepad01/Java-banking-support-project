@@ -125,7 +125,7 @@ public class DepotAccount extends Account{
 
     public void dropSuspendedInterest(){
         if(isSuspended()){}
-        this.flags &= 0b11111111111111111111111111111101;
+        this.flags &= 0b11111101;
     }
 
     private void updateBalance(boolean modify){
@@ -188,7 +188,7 @@ public class DepotAccount extends Account{
                 dropSuspendedInterest();
 
         }
-        this.flags &= 0b11111111111111111111111111111110;
+        this.flags &= 0b11111110;
     }
 
     @Override

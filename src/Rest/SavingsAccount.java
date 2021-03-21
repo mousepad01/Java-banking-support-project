@@ -135,7 +135,7 @@ public class SavingsAccount extends Account{
     public void dropSuspended(){
         if((flags & 1) == 1)
             lastUpdated = new Date(System.currentTimeMillis());
-        this.flags &= 0b11111111111111111111111111111110;
+        this.flags &= 0b11111110;
     }
 
     @Override

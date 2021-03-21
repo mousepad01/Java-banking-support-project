@@ -1,6 +1,6 @@
 package Rest;
 
-class AccountIdGenerator {
+class IdGenerator {
 
     public static String BASIC_PREFIX;
     public static int basicCounter;
@@ -14,6 +14,12 @@ class AccountIdGenerator {
     public static String DEPOT_PREFIX;
     public static int depotCounter;
 
+    public static String CREDIT_PREFIX;
+    public static int creditCounter;
+
+    public static String DEBIT_PREFIX;
+    public static int debitCounter;
+
     static{
         BASIC_PREFIX = "ba";
         basicCounter = 19382875;
@@ -26,9 +32,15 @@ class AccountIdGenerator {
 
         DEPOT_PREFIX = "dp";
         depotCounter = 42749831;
+
+        CREDIT_PREFIX = "cr";
+        creditCounter = 62736288;
+
+        DEBIT_PREFIX = "db";
+        debitCounter = 82739103;
     }
 
-    public static String getId(String type){
+    protected static String getAccountId(String type){
 
         switch(type){
 
@@ -50,6 +62,23 @@ class AccountIdGenerator {
 
             default:
                 return ""; /// EXCEPTIE
+        }
+    }
+
+    protected static String getCardId(String type){
+
+        switch(type){
+
+            case "DEBIT":
+                debitCounter += 1;
+                return DEBIT_PREFIX + debitCounter;
+
+            case "CREDIT":
+                creditCounter += 1;
+                return CREDIT_PREFIX + creditCounter;
+
+            default:
+                return ""; // EXCEPTIE
         }
     }
 }

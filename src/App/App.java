@@ -28,28 +28,20 @@ public class App {
                 "0713444555", "2018-10-09", "INFORMATICIAN",
                 "REMOTE", 4000);
 
-        client.createDepotAccount("cont de depozit", emp, "ONE MONTH", 10000);
-        client.createCurrentAccount("contul curent", emp);
-        Account contul1a = client.getAccount("cont de depozit");
-        Account contul2a = client.getAccount("contul curent");
+        client.createCurrentAccount("cont curent", emp);
+        CurrentAccount cont = (CurrentAccount) client.getAccount("cont curent");
 
-        DepotAccount contul1 = (DepotAccount) contul1a;
-        //CurrentAccount contul2 = (CurrentAccount) contul2a;
-        /*contul1.add(1);
-        dormi(1300);
-        System.out.println(contul1.getBalance());
+        cont.add(2700);
 
-        contul1.suspendAccount();
-        //contul1.dropSuspendedInterest();
+        client.createDebitCard("cont curent", "card de debit", emp);
+        DebitCard cardDebit = (DebitCard) client.getCard("card de debit");
 
-        dormi(1400);
-        System.out.println(contul1.getBalance());
+        System.out.println(cardDebit.getBalance());
+        cardDebit.add(1000);
+        cardDebit.extract(200);
 
-        contul1.dropSuspended();
+        System.out.println(cardDebit.getAccountName());
 
-        dormi(1410);
-
-        System.out.println(contul1.getBalance());*/
-
+        System.out.println(cont.getBalance());
     }
 }

@@ -2,7 +2,7 @@ package Rest;
 
 import java.util.Objects;
 
-public class CurrentAccount extends Account{
+public class CurrentAccount extends AccountWithCard{
     
     public static double MAX_BALANCE;
 
@@ -98,10 +98,7 @@ public class CurrentAccount extends Account{
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        if (!super.equals(o))
-            return false;
-
-        return true;
+        return super.equals(o);
     }
 
     @Override

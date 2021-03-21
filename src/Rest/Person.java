@@ -19,7 +19,7 @@ public abstract class Person {
 
     public Person(String name, String surname, String birthDateStr, String address, String id, String email, String phoneNumber) {
 
-        if(!Validator.nameOk(name) || !Validator.nameOk(surname) || !Validator.emailOk(email) || !Validator.phoneNumberOk(phoneNumber) || !Validator.idOk(id) || !Validator.pastDateOk(birthDateStr)){}
+        if(!Validator.nameOk(name) || !Validator.nameOk(surname) || !Validator.emailOk(email) || !Validator.phoneNumberOk(phoneNumber) || !Validator.personIdOk(id) || !Validator.pastDateOk(birthDateStr)){}
 
         this.name = name;
         this.surname = surname;
@@ -35,7 +35,7 @@ public abstract class Person {
 
     public Person(String name, String surname, String birthDateStr, String id) {
 
-        if(!Validator.nameOk(name) || !Validator.nameOk(surname) || !Validator.idOk(id) || !Validator.pastDateOk(birthDateStr)){}
+        if(!Validator.nameOk(name) || !Validator.nameOk(surname) || !Validator.personIdOk(id) || !Validator.pastDateOk(birthDateStr)){}
 
         this.name = name;
         this.surname = surname;

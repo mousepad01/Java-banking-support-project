@@ -15,15 +15,15 @@ public abstract class Account {
 
     protected double balance;
 
-    protected int flags; /// m-am gandit sa am un camp de "flag" uri de tip cont suspendat/nu
-                         /// si niste getters care sa citeasca cu o masca pe biti din flags prop ceruta
-                         /// motive: 1. economisire de memorie (decat sa am foarte multe bool uri)
-                         /// 2. atat timp cat oricum accesez doar prin getters
-                         /// nu va ingreuna aplicatia dpdv al usurintei de utilizare
-                         /// 3. as putea decide sa folosesc/ sa nu mai folosesc unele flag uri
-                         ///    fara a trebui sa schimb structura claselor la fel de mult
-                         ///    si nici a (viitoarei) baze de date din spate
-                         ///    (as putea asigura backwards compatibility)
+    protected byte flags; /// m-am gandit sa am un camp de "flag" uri de tip cont suspendat/nu
+                          /// si niste getters care sa citeasca cu o masca pe biti din flags prop ceruta
+                          /// motive: 1. economisire de memorie (decat sa am foarte multe bool uri)
+                          /// 2. atat timp cat oricum accesez doar prin getters
+                          /// nu va ingreuna aplicatia dpdv al usurintei de utilizare
+                          /// 3. as putea decide sa folosesc/ sa nu mai folosesc unele flag uri
+                          ///    fara a trebui sa schimb structura claselor la fel de mult
+                          ///    si nici a (viitoarei) baze de date din spate
+                          ///    (as putea asigura backwards compatibility)
 
     /*protected Account(String accountId, Client owner, String creationDateStr, String name, Employee contractAssistant) {
 
@@ -38,7 +38,7 @@ public abstract class Account {
 
     protected Account(String accountId, Client owner, String name, Employee contractAssistant) {
 
-        if(!accountIdOk(accountId)){}
+        if(!Validator.accountIdOk(accountId)){}
 
         this.accountId = accountId;
         this.owner = owner;
@@ -65,6 +65,10 @@ public abstract class Account {
         return owner;
     }
 
+    public String getName(){
+        return name;
+    }
+
     public Date getCreationDate() {
         return creationDate;
     }
@@ -78,7 +82,11 @@ public abstract class Account {
     }
 
     public void dropSuspended(){
-        this.flags &= 0b11111111111111111111111111111110;
+        this.flags &= 0b11111110;
+    }
+
+    public Employee getContractAssistant(){
+        return contractAssistant;
     }
 
     @Override
@@ -99,7 +107,5 @@ public abstract class Account {
 
     /// local validator(s)
 
-    private boolean accountIdOk(String toCheck){
-        return toCheck.matches("[a-z]{2}[0-9]{8}");
-    }
+
 }

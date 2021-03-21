@@ -1,12 +1,12 @@
 package Rest;
 /*
-cont de baza, are daor o suma din care pot extrage sau pot adauga
-are o limita minima si o limita maxima
+    cont de baza, are doar o suma din care pot extrage sau pot adauga
+    asemanator contului curent
  */
 
 import java.util.Objects;
 
-public class BasicAccount extends Account {
+public class BasicAccount extends AccountWithCard {
 
     public static double MAX_BALANCE;
     public static double TRANSACTION_FEE;
@@ -15,10 +15,6 @@ public class BasicAccount extends Account {
         MAX_BALANCE = 7000;
         TRANSACTION_FEE = 0.01;
     }
-
-    /*protected BasicAccount(String accountId, Client owner, String creationDateStr, String name, Employee contractAssistant) {
-        super(accountId, owner, creationDateStr, name, contractAssistant);
-    }*/
 
     protected BasicAccount(String accountId, Client owner, String name, Employee contractAssistant) {
         super(accountId, owner, name, contractAssistant);
