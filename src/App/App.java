@@ -1,6 +1,6 @@
 package App;
+import AppManager.*;
 
-import ModelManager.*;
 //import java.time.*;
 
 public class App {
@@ -18,19 +18,19 @@ public class App {
     public static void main(String[] args) {
 
         Client client;
-        client = new Client("a", "b", "2015-12-29", "2021-03-18");
+        client = new Client("a", "b", "2015-12-29", "idclient002");
 
         Employee emp;
         emp = new Employee("a", "b", "2015-12-29", "str 1", "a@y",
                 "0713444555", "2018-10-09", "INFORMATICIAN",
-                "REMOTE", 4000);
+                "REMOTE", "id01", 4000);
 
-        CurrentAccount cont = client.createCurrentAccount("cont curent", emp);
+        CurrentAccount cont = client.createCurrentAccount("cont curent", emp, "cont1");
         //CurrentAccount cont = (CurrentAccount) client.getAccount("cont curent");
 
         cont.add(2700);
 
-        DebitCard cardDebit = client.createDebitCard("cont curent", "card de debit", emp);
+        DebitCard cardDebit = client.createDebitCard("cont curent", "card de debit", emp, "cardD");
         //DebitCard cardDebit = (DebitCard) client.getCard("card de debit");
 
         System.out.println(cardDebit.getBalance());
@@ -39,13 +39,15 @@ public class App {
 
         System.out.println(cont.getBalance());
 
-        client.createCreditCard("card de credit", 1200, emp);
-        client.createCreditCard("credit pt ceva", 3500, emp);
+        client.createCreditCard("card de credit", 1200, emp, "cr1");
+        client.createCreditCard("credit pt ceva", 3500, emp, "cr2");
 
-        AccountWithCard cont2 = client.createBasicAccount("cont de baza", emp);
+        AccountWithCard cont2 = client.createBasicAccount("cont de baza", emp, "ac2");
         //AccountWithCard cont2 = (AccountWithCard) client.getAccount("cont de baza");
 
         System.out.println(client.getClientFunds());
         System.out.println(client.getCreditDebt());
+
+
     }
 }

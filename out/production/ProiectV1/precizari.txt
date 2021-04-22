@@ -1,0 +1,14 @@
+precizari:
+
+am citit review ul lasat in urma primului deadline
+am reconsiderat modul si modul cum am organizat lucrururile, dar am ajuns la concluzia ca multe le voi pastra la fel
+motivul pentru care o parte din logica am tinut-o in clasele originale (Person, Client etc)
+este pentru ca acea logica reflecta comportamentul in mod direct al obiectului
+am creat servicii separate de clasa obiectului
+pentru logica care tine de manipularea obiectului/ obiectelor si a comportamentului lor din exterior
+dar comportamentul obiectului față de "mediul inconjurator" l-am pastrat in clasa alaturi de atribute
+
+clasele in care am pastrat atributele statice sunt lasate asa
+pentru a imita functionalitatea unor atribute/valori/metode globale
+care nu au sens sa fie instantiate, ci mai degraba sa fie omniprezente/ cu un comportament constant
+pe toata durata programului (ex clasa Validator)
