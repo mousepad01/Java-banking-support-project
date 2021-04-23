@@ -71,6 +71,15 @@ public class BasicAccount extends AccountWithCard {
         return balance;
     }
 
+    public String getSerialization(){
+
+        String serialization = super.getSerialization();
+
+        serialization += "BASIC ACCOUNT: ;";
+
+        return serialization;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)

@@ -6,6 +6,8 @@ package AppManager;
       dar cu o instanta a contului asociat pot extrage o referinta catre card
  */
 
+import java.util.Arrays;
+
 public class DebitCard extends Card{
 
     private Account associatedAccount;
@@ -71,5 +73,15 @@ public class DebitCard extends Card{
         if(associatedAccount == null){}
 
         return associatedAccount.getName();
+    }
+
+    public String getSerialization(){
+
+        StringBuilder serialization = new StringBuilder(super.getSerialization());
+        serialization.append("DEBIT CARD: ");
+
+        serialization.append(associatedAccount == null ? null : associatedAccount.getAccountId()).append(";");
+
+        return serialization.toString();
     }
 }

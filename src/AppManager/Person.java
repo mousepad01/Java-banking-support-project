@@ -112,6 +112,21 @@ public abstract class Person {
         this.phoneNumber = phoneNumber;
     }
 
+    public String getSerialization(){
+
+        StringBuilder serialization = new StringBuilder("PERSON: ");
+
+        serialization.append(this.getName() + ";");
+        serialization.append(this.getSurname() + ";");
+        serialization.append(this.getId() + ";");
+        serialization.append(this.getBirthDate() + ";");
+        serialization.append(this.getAddress() + ";");
+        serialization.append(this.getEmail() + ";");
+        serialization.append(this.getPhoneNumber() + ";");
+
+        return serialization.toString();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)

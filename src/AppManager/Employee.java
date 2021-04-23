@@ -11,7 +11,8 @@ public class Employee extends Person {
     private String workplace;
     private int salary;
 
-    public Employee(String name, String surname, String birthDateStr, String address, String email, String phoneNumber, String hireDateStr, String job, String workplace, String id, int salary) {
+    public Employee(String name, String surname, String birthDateStr, String address, String email,
+                    String phoneNumber, String hireDateStr, String job, String workplace, String id, int salary) {
 
         super(name, surname, birthDateStr, address, email, phoneNumber, id);
 
@@ -23,7 +24,8 @@ public class Employee extends Person {
         this.salary = salary;
     }
 
-    public Employee(String name, String surname, String birthDateStr, String address, String email, String phoneNumber, String hireDateStr, String job, String workplace, int salary) {
+    public Employee(String name, String surname, String birthDateStr, String address, String email,
+                    String phoneNumber, String hireDateStr, String job, String workplace, int salary) {
         super(name, surname, birthDateStr, address, email, phoneNumber);
 
         if(!Validator.pastDateOk(hireDateStr) || !hireOk(job, salary, workplace)){}
@@ -60,6 +62,19 @@ public class Employee extends Person {
 
     public void setSalary(int salary) {
         this.salary = salary;
+    }
+
+    public String getSerialization(){
+
+        StringBuilder serialization = new StringBuilder(super.getSerialization());
+        serialization.append("EMPLOYEE: ");
+
+        serialization.append(this.getHireDate()).append(";");
+        serialization.append(this.getJob()).append(";");
+        serialization.append(this.getWorkplace()).append(";");
+        serialization.append(this.getSalary()).append(";");
+
+        return serialization.toString();
     }
 
     @Override

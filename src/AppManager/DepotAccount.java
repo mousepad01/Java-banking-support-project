@@ -154,12 +154,15 @@ public class DepotAccount extends Account{
             suspendInterest();
     }
 
-    protected int getTerm(){
-        return this.term;
-    }
+    public String getSerialization(){
 
-    protected Date getLastUpdatedTerm(){
-        return this.lastUpdatedTerm;
+        StringBuilder serialization = new StringBuilder(super.getSerialization());
+
+        serialization.append("DEPOT ACCOUNT: ");
+        serialization.append(this.term).append(";");
+        serialization.append(this.lastUpdatedTerm.toString()).append(";");
+
+        return serialization.toString();
     }
 
     @Override

@@ -16,7 +16,7 @@ import java.util.Random;
 
 public abstract class Card {
 
-    public boolean suspendedStatus;
+    protected boolean suspendedStatus;
 
     private boolean pinIsInitialized;
     private byte[] pinHash;
@@ -121,6 +121,22 @@ public abstract class Card {
                 return false;
 
         return true;
+    }
+
+    public String getSerialization(){
+
+        StringBuilder serialization = new StringBuilder("CARD: ");
+
+        serialization.append(suspendedStatus).append(";");
+        serialization.append(pinIsInitialized).append(";");
+        serialization.append(Arrays.toString(pinHash)).append(";");
+        serialization.append(contractAssistant.getId()).append(";");
+        serialization.append(owner.getId()).append(";");
+        serialization.append(cardId).append(";");
+        serialization.append(name).append(";");
+        serialization.append(emissionDate.toString()).append(";");
+
+        return serialization.toString();
     }
 
     @Override

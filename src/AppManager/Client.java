@@ -16,7 +16,9 @@ public class Client extends Person {
     private HashMap<String, Card> cards;
     private HashMap<String, Account> accounts;
 
-    public Client(String name, String surname, String birthDateStr, String address, String email, String phoneNumber, String registrationDateStr, String id) {
+    public Client(String name, String surname, String birthDateStr, String address, String email, String phoneNumber,
+                  String registrationDateStr, String id, ArrayList<String> accountsIds, ArrayList<String> cardsIds) {
+
         super(name, surname, birthDateStr, address, email, phoneNumber, id);
 
         if(!Validator.pastDateOk(registrationDateStr)){}
@@ -25,6 +27,9 @@ public class Client extends Person {
 
         this.accounts = new HashMap<>();
         this.cards = new HashMap<>();
+
+        this.accountsIds = accountsIds;
+        this.cardsIds = cardsIds;
 
         ClientsManager.clients.put(this.id, this);
     }
@@ -233,6 +238,42 @@ public class Client extends Person {
         if(toRemove.getBalance() < 0){}
 
         accounts.remove(name);
+    }
+
+    public String getSerialization(){
+
+        StringBuilder serialization = new StringBuilder(super.getSerialization());
+        serialization.append("CLIENT: ");
+
+        serialization.append(this.getRegistrationDate()).append(";");
+
+        StringBuilder accounts = new StringBuilder("accounts: ");
+
+        Iterator<HashMap.Entry<String, Account>> ita = this.getAllAccounts();
+
+        while(ita.hasNext()){
+
+            HashMap.Entry<String, Account> strAcc = ita.next();
+            accounts.append(strAcc.getValue().getAccountId());
+            accounts.append(",");
+        }
+
+        serialization.append(accounts.toString()).append(";");
+
+        StringBuilder cards = new StringBuilder("cards: ");
+
+        Iterator<HashMap.Entry<String, Card>> itc = this.getAllCards();
+
+        while(itc.hasNext()){
+
+            HashMap.Entry<String, Card> strAcc = itc.next();
+            cards.append(strAcc.getValue().getCardId());
+            cards.append(",");
+        }
+
+        serialization.append(cards.toString()).append(";");
+
+        return serialization.toString();
     }
 
     @Override

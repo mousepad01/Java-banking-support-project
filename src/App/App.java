@@ -1,6 +1,10 @@
 package App;
 import AppManager.*;
 
+import java.io.File;
+import java.io.IOError;
+import java.io.IOException;
+
 //import java.time.*;
 
 public class App {
@@ -18,7 +22,7 @@ public class App {
     public static void main(String[] args) {
 
         Client client;
-        client = new Client("a", "b", "2015-12-29", "idclient002");
+        client = new Client("a", "b", "2015-12-29");
 
         Employee emp;
         emp = new Employee("a", "b", "2015-12-29", "str 1", "a@y",
@@ -48,6 +52,22 @@ public class App {
         System.out.println(client.getClientFunds());
         System.out.println(client.getCreditDebt());
 
+        FileIOManager fileIOManager = FileIOManager.getInstance();
 
+        System.out.println(client.getAccount("cont de baza"));
+
+        try{
+            fileIOManager.saveInFile(client, "clientSerialized.txt");
+            fileIOManager.saveInFile(client.getAccount("cont de baza"), "ac2Ser.txt");
+            fileIOManager.saveInFile(client.getAccount("cont curent"), "acc.txt");
+            fileIOManager.saveInFile(client.getCard("card de debit"), "cardDser.txt");
+
+            System.out.println(fileIOManager.readFromFilePersons("clientSerialized.txt"));
+            System.out.println(fileIOManager.readFromFileAccounts("ac2Ser.txt"));
+            System.out.println(fileIOManager.readFromFileAccounts("acc.txt"));
+        }
+        catch(IOException err){
+            System.out.println(err);
+        }
     }
 }

@@ -126,12 +126,15 @@ public class SavingsAccount extends Account{
         lastUpdated = new Date(currentTime);
     }
 
-    protected double getInterestRate(){
-        return this.interestRate;
-    }
+    public String getSerialization(){
 
-    protected Date getLastUpdated(){
-        return this.lastUpdated;
+        StringBuilder serialization = new StringBuilder(super.getSerialization());
+
+        serialization.append("SAVINGS ACCOUNT: ");
+        serialization.append(this.interestRate).append(";");
+        serialization.append(this.lastUpdated.toString()).append(";");
+
+        return serialization.toString();
     }
 
     @Override

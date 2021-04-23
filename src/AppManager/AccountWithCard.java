@@ -48,6 +48,18 @@ public abstract class AccountWithCard extends Account{
         super(accountId, owner, name, contractAssistant);
     }
 
+    public String getSerialization(){
+
+        StringBuilder serialization = new StringBuilder(super.getSerialization());
+
+        serialization.append("ACCOUNT WITH CARD: ");
+
+        DebitCard associated = this.getAssociatedCard();
+        serialization.append(associated == null ? null : associated.getCardId()).append(";");
+
+        return serialization.toString();
+    }
+
     @Override
     public boolean equals(Object o) {
 

@@ -91,16 +91,16 @@ public class CurrentAccount extends AccountWithCard{
         return this.balance;
     }
 
-    protected double getTransactionFee() {
-        return transactionFee;
-    }
+    public String getSerialization(){
 
-    protected double getExtractFee() {
-        return extractFee;
-    }
+        StringBuilder serialization = new StringBuilder(super.getSerialization());
 
-    protected double getAddFee() {
-        return addFee;
+        serialization.append("CURRENT ACCOUNT: ");
+        serialization.append(this.transactionFee).append(";");
+        serialization.append(this.extractFee).append(";");
+        serialization.append(this.addFee).append(";");
+
+        return serialization.toString();
     }
 
     @Override

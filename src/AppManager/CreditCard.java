@@ -80,4 +80,16 @@ public class CreditCard extends Card{
     public boolean isActive(){
         return activeStatus;
     }
+
+    public String getSerialization(){
+
+        StringBuilder serialization = new StringBuilder(super.getSerialization());
+        serialization.append("CREDIT CARD: ");
+
+        serialization.append(activeStatus).append(";");
+        serialization.append(creditTotalAmmount).append(";");
+        serialization.append(creditAmmount).append(";");
+
+        return serialization.toString();
+    }
 }

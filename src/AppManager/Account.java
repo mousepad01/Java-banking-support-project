@@ -27,6 +27,8 @@ public abstract class Account {
 
     protected Account(String accountId, Client owner, String name, Employee contractAssistant) {
 
+        if(contractAssistant == null) {}
+
         this.accountId = accountId;
         this.owner = owner;
         this.creationDate = new Date(System.currentTimeMillis());
@@ -76,9 +78,19 @@ public abstract class Account {
         return contractAssistant;
     }
 
-    // creeata numai pentru a fi accesata din FileIOManager / db
-    protected byte getFlags(){
-        return this.flags;
+    public String getSerialization(){
+
+        StringBuilder serialization = new StringBuilder("ACCOUNT: ");
+
+        serialization.append(this.getAccountId()).append(";");
+        serialization.append(this.getOwner().getId()).append(";");
+        serialization.append(this.getName()).append(";");
+        serialization.append(this.getContractAssistant().getId()).append(";"); // account assistant tot timpul nenul
+        serialization.append(this.getCreationDate().toString()).append(";");
+        serialization.append(this.getBalance()).append(";");
+        serialization.append(this.flags).append(";");
+
+        return serialization.toString();
     }
 
     @Override
