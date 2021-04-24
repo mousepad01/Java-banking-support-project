@@ -37,6 +37,9 @@ public abstract class Card {
         this.emissionDate = new Date(System.currentTimeMillis());
 
         pinIsInitialized = false;
+
+        Logger log = Logger.getLogger();
+        log.logMessage("new card created");
     }
 
     protected Card(boolean suspendedStatus, boolean pinIsInitialized, byte[] pinHash, Employee contractAssistant,
@@ -50,6 +53,9 @@ public abstract class Card {
         this.cardId = cardId;
         this.name = name;
         this.emissionDate = emissionDate;
+
+        Logger log = Logger.getLogger();
+        log.logMessage("new card created");
     }
 
     public abstract double add(double val);

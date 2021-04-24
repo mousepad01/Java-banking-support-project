@@ -99,10 +99,10 @@ public class App {
 
             ArrayList<Person> npersons = fileIOManager.link(rpersons, raccs, rcards);
 
-            for(Person p : persons)
+            for(Person p : npersons)
                 System.out.println(p);
 
-            Client cl = (Client) persons.get(0);
+            Client cl = (Client) npersons.get(0);
 
             Iterator<HashMap.Entry<String, Account>> ita = cl.getAllAccounts();
             Iterator<HashMap.Entry<String, Card>> itc = cl.getAllCards();
@@ -125,5 +125,8 @@ public class App {
         catch(IOException | InstantiationException err){
             System.out.println(err);
         }
+
+        Logger log = Logger.getLogger();
+        log.endLogging();
     }
 }

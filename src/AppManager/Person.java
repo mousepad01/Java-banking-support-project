@@ -32,6 +32,9 @@ public abstract class Person {
         this.address = address;
         this.email = email;
         this.phoneNumber = phoneNumber;
+
+        Logger log = Logger.getLogger();
+        log.logMessage("new person created");
     }
 
     public Person(String name, String surname, String birthDateStr, String address, String email, String phoneNumber) {
@@ -50,6 +53,9 @@ public abstract class Person {
         this.address = address;
         this.email = email;
         this.phoneNumber = phoneNumber;
+
+        Logger log = Logger.getLogger();
+        log.logMessage("new person created");
     }
 
     public Person(String name, String surname, String birthDateStr) {
@@ -62,6 +68,9 @@ public abstract class Person {
         this.id = IdGenerator.getPersonId();
 
         this.birthDate = Date.valueOf(birthDateStr);
+
+        Logger log = Logger.getLogger();
+        log.logMessage("new person created");
     }
 
     public String getName() {

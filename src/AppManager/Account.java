@@ -34,6 +34,9 @@ public abstract class Account {
         this.creationDate = new Date(System.currentTimeMillis());
         this.name = name;
         this.contractAssistant = contractAssistant;
+
+        Logger log = Logger.getLogger();
+        log.logMessage("new account created");
     }
 
     protected Account(String accountId, Client owner, String name, Employee contractAssistant,
@@ -46,6 +49,9 @@ public abstract class Account {
         this.creationDate = creationDate;
         this.balance = balance;
         this.flags = flags;
+
+        Logger log = Logger.getLogger();
+        log.logMessage("new account created");
     }
 
     public abstract double add(double val);
