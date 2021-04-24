@@ -6,6 +6,7 @@ package AppManager;
       dar cu o instanta a contului asociat pot extrage o referinta catre card
  */
 
+import java.sql.Date;
 import java.util.Arrays;
 
 public class DebitCard extends Card{
@@ -14,6 +15,15 @@ public class DebitCard extends Card{
 
     protected DebitCard(Account associatedAccount, Employee contractAssistant, String name, String cardId) {
         super(name, associatedAccount.getOwner(), contractAssistant, cardId);
+
+        this.associatedAccount = associatedAccount;
+    }
+
+    protected DebitCard(boolean suspendedStatus, boolean pinIsInitialized, byte[] pinHash, Employee contractAssistant,
+                        Client owner, String cardId, String name, Date emissionDate, Account associatedAccount){
+
+        super(suspendedStatus, pinIsInitialized, pinHash, contractAssistant, owner, cardId,
+                name, emissionDate);
 
         this.associatedAccount = associatedAccount;
     }
@@ -83,5 +93,13 @@ public class DebitCard extends Card{
         serialization.append(associatedAccount == null ? null : associatedAccount.getAccountId()).append(";");
 
         return serialization.toString();
+    }
+
+    @Override
+    public String toString() {
+        return "DebitCard{" +
+                super.toString() + "\n" +
+                "associatedAccount=" + (associatedAccount == null ? null : associatedAccount.getAccountId()) +
+                '}';
     }
 }

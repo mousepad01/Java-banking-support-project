@@ -1,1 +1,0 @@
-CARD: false;false;null;id01;192837492020;cardD;card de debit;2021-04-23;DEBIT CARD: cont1;

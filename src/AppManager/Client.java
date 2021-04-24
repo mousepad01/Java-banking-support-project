@@ -57,6 +57,14 @@ public class Client extends Person {
         return accounts.entrySet().iterator();
     }
 
+    public ArrayList<String> getAccountsIds(){
+        return this.accountsIds;
+    }
+
+    public ArrayList<String> getCardsIds(){
+        return this.cardsIds;
+    }
+
     public Card getCard(String toSearch){
         return cards.get(toSearch);
     }
@@ -94,6 +102,21 @@ public class Client extends Person {
         }
 
         return totalCreditDebt;
+    }
+
+    protected void linkAccount(Account toLink){
+        this.accounts.put(toLink.getName(), toLink);
+    }
+
+    protected void linkCard(Card toLink){
+
+        if(toLink instanceof DebitCard){
+
+            AccountWithCard associatedAccount = (AccountWithCard) accounts.get(((DebitCard) toLink).getAccountName());
+            associatedAccount.linkCard((DebitCard) toLink);
+        }
+
+        this.cards.put(toLink.getCardId(), toLink);
     }
 
     public BasicAccount createBasicAccount(String name, Employee contractAssistant){

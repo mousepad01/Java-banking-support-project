@@ -5,6 +5,8 @@ package AppManager;
     va avea o taxa fixa de la inceput
  */
 
+import java.sql.Date;
+
 public class CreditCard extends Card{
 
     public static final double FEE;
@@ -24,6 +26,18 @@ public class CreditCard extends Card{
         this.creditTotalAmmount = requestedAmmount * (1 + FEE);
         this.creditAmmount = requestedAmmount;
         this.activeStatus = true;
+    }
+
+    protected CreditCard(boolean suspendedStatus, boolean pinIsInitialized, byte[] pinHash, Employee contractAssistant,
+                         Client owner, String cardId, String name, Date emissionDate, boolean activeStatus,
+                         double creditTotalAmmount, double creditAmmount){
+
+        super(suspendedStatus, pinIsInitialized, pinHash, contractAssistant, owner, cardId,
+                name, emissionDate);
+
+        this.activeStatus = activeStatus;
+        this.creditTotalAmmount = creditTotalAmmount;
+        this.creditAmmount = creditAmmount;
     }
 
     protected void dereferenceCard(){
@@ -91,5 +105,15 @@ public class CreditCard extends Card{
         serialization.append(creditAmmount).append(";");
 
         return serialization.toString();
+    }
+
+    @Override
+    public String toString() {
+        return "CreditCard{" +
+                super.toString() + "\n" +
+                "activeStatus=" + activeStatus +
+                ", creditTotalAmmount=" + creditTotalAmmount +
+                ", creditAmmount=" + creditAmmount +
+                '}';
     }
 }

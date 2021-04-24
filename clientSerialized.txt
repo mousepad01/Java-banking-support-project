@@ -1,1 +1,0 @@
-PERSON: a;b;192837492020;2015-12-29;null;null;null;CLIENT: 2021-04-23;accounts: ac2,cont1,;cards: cr1,cardD,cr2,;

@@ -27,7 +27,7 @@ public abstract class Person {
 
         this.id = id;
 
-        this.birthDate = Date.valueOf(birthDateStr);
+        this.birthDate = birthDateStr == null ? null : Date.valueOf(birthDateStr);
 
         this.address = address;
         this.email = email;
@@ -45,7 +45,7 @@ public abstract class Person {
 
         this.id = IdGenerator.getPersonId();
 
-        this.birthDate = Date.valueOf(birthDateStr);
+        this.birthDate = birthDateStr == null ? null : Date.valueOf(birthDateStr);
 
         this.address = address;
         this.email = email;

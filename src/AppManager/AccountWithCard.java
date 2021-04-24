@@ -1,5 +1,6 @@
 package AppManager;
 
+import java.sql.Date;
 import java.util.Objects;
 
 public abstract class AccountWithCard extends Account{
@@ -31,6 +32,10 @@ public abstract class AccountWithCard extends Account{
         return null;
     }
 
+    protected void linkCard(DebitCard toLink){
+        associatedCard = toLink;
+    }
+
     public DebitCard getAssociatedCard(){
         return associatedCard;
     }
@@ -44,8 +49,15 @@ public abstract class AccountWithCard extends Account{
         associatedCard = null;
     }
 
-    public AccountWithCard(String accountId, Client owner, String name, Employee contractAssistant) {
+    protected AccountWithCard(String accountId, Client owner, String name, Employee contractAssistant) {
         super(accountId, owner, name, contractAssistant);
+    }
+
+    protected AccountWithCard(String accountId, Client owner, String name, Employee contractAssistant,
+                              Date creationDate, double balance, byte flags, DebitCard associatedCard){
+
+        super(accountId, owner, name, contractAssistant, creationDate, balance, flags);
+        this.associatedCard = associatedCard;
     }
 
     public String getSerialization(){
@@ -81,6 +93,9 @@ public abstract class AccountWithCard extends Account{
 
     @Override
     public String toString() {
-        return getName();
+        return "AccountWithCard{" +
+                super.toString() + "\n" +
+                "associatedCard=" + (associatedCard == null ? null : associatedCard.getCardId()) +
+                '}';
     }
 }

@@ -61,6 +61,15 @@ public class DepotAccount extends Account{
         }
     }
 
+    protected DepotAccount(String accountId, Client owner, String name, Employee contractAssistant,
+                           Date creationDate, double balance, byte flags, int term, Date lastUpdatedTerm){
+
+        super(accountId, owner, name, contractAssistant, creationDate, balance, flags);
+
+        this.term = term;
+        this.lastUpdatedTerm = lastUpdatedTerm;
+    }
+
     public double add(double val){
 
         if(isSuspended()){}
@@ -229,6 +238,10 @@ public class DepotAccount extends Account{
 
     @Override
     public String toString() {
-        return getName();
+        return "DepotAccount{" +
+                super.toString() + "\n" +
+                "term=" + term +
+                ", lastUpdatedTerm=" + lastUpdatedTerm +
+                '}';
     }
 }

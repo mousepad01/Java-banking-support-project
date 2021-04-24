@@ -4,6 +4,7 @@ package AppManager;
     asemanator contului curent
  */
 
+import java.sql.Date;
 import java.util.Objects;
 
 public class BasicAccount extends AccountWithCard {
@@ -18,6 +19,12 @@ public class BasicAccount extends AccountWithCard {
 
     protected BasicAccount(String accountId, Client owner, String name, Employee contractAssistant) {
         super(accountId, owner, name, contractAssistant);
+    }
+
+    protected BasicAccount(String accountId, Client owner, String name, Employee contractAssistant,
+                           Date creationDate, double balance, byte flags, DebitCard associatedCard){
+
+        super(accountId, owner, name, contractAssistant, creationDate, balance, flags, associatedCard);
     }
 
     public double add(double val){
@@ -100,6 +107,6 @@ public class BasicAccount extends AccountWithCard {
 
     @Override
     public String toString() {
-        return getName();
+        return "BasicAccount{" + super.toString() + "\n" + "}";
     }
 }

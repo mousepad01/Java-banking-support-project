@@ -39,6 +39,19 @@ public abstract class Card {
         pinIsInitialized = false;
     }
 
+    protected Card(boolean suspendedStatus, boolean pinIsInitialized, byte[] pinHash, Employee contractAssistant,
+                   Client owner, String cardId, String name, Date emissionDate){
+
+        this.suspendedStatus = suspendedStatus;
+        this.pinIsInitialized = pinIsInitialized;
+        this.pinHash = pinHash;
+        this.contractAssistant = contractAssistant;
+        this.owner = owner;
+        this.cardId = cardId;
+        this.name = name;
+        this.emissionDate = emissionDate;
+    }
+
     public abstract double add(double val);
 
     public abstract double extract(double val);
@@ -61,7 +74,7 @@ public abstract class Card {
         suspendedStatus = false;
     }
 
-    protected int initPin(){
+    public int initPin(){
 
         if(pinIsInitialized){}
 
@@ -160,6 +173,15 @@ public abstract class Card {
 
     @Override
     public String toString() {
-        return getName();
+        return "Card{" +
+                "suspendedStatus=" + suspendedStatus +
+                ", pinIsInitialized=" + pinIsInitialized +
+                ", pinHash=" + Arrays.toString(pinHash) +
+                ", contractAssistant=" + (contractAssistant == null ? null : contractAssistant.getId()) +
+                ", owner=" + (owner == null ? null : owner.getId()) +
+                ", cardId='" + cardId + '\'' +
+                ", name='" + name + '\'' +
+                ", emissionDate=" + emissionDate +
+                '}';
     }
 }

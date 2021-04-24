@@ -42,6 +42,15 @@ public class SavingsAccount extends Account{
         super(accountId, owner, name, contractAssistant);
     }
 
+    protected SavingsAccount(String accountId, Client owner, String name, Employee contractAssistant,
+                           Date creationDate, double balance, byte flags, double interestRate, Date lastUpdated){
+
+        super(accountId, owner, name, contractAssistant, creationDate, balance, flags);
+
+        this.interestRate = interestRate;
+        this.lastUpdated = lastUpdated;
+    }
+
     private void updateInterestRate(){
 
         if(balance < LOW_INTEREST_THRESHOLD){
@@ -177,6 +186,10 @@ public class SavingsAccount extends Account{
 
     @Override
     public String toString() {
-        return getName();
+        return "SavingsAccount{" +
+                super.toString() + "\n" +
+                "interestRate=" + interestRate +
+                ", lastUpdated=" + lastUpdated +
+                '}';
     }
 }

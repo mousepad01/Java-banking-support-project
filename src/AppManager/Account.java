@@ -36,6 +36,18 @@ public abstract class Account {
         this.contractAssistant = contractAssistant;
     }
 
+    protected Account(String accountId, Client owner, String name, Employee contractAssistant,
+                      Date creationDate, double balance, byte flags){
+
+        this.accountId = accountId;
+        this.owner = owner;
+        this.name = name;
+        this.contractAssistant = contractAssistant;
+        this.creationDate = creationDate;
+        this.balance = balance;
+        this.flags = flags;
+    }
+
     public abstract double add(double val);
 
     public abstract double extract(double val);
@@ -107,5 +119,18 @@ public abstract class Account {
     @Override
     public int hashCode() {
         return Objects.hash(accountId, owner, name, creationDate, flags);
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "accountId='" + accountId + '\'' +
+                ", owner=" + owner.toString() +
+                ", name='" + name + '\'' +
+                ", contractAssistant=" + contractAssistant.getId() +
+                ", creationDate=" + creationDate +
+                ", balance=" + balance +
+                ", flags=" + flags +
+                '}';
     }
 }

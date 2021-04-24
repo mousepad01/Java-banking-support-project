@@ -32,14 +32,22 @@ public class FileIOManager {
         return instance != null;
     }
 
+    public String checkNull(String toCheck){
+        return toCheck.equals("null") ? null : toCheck;
+    }
+
     //-----------
 
     public void saveInFilePersons(Iterable <Person> toWriteCollection, String fileName) throws IOException{
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))){
 
-            for (Person toWrite : toWriteCollection)
+            for (Person toWrite : toWriteCollection){
+
                 saveInFile(toWrite, writer);
+                writer.write('\n');
+            }
+
         }
     }
 
@@ -79,13 +87,13 @@ public class FileIOManager {
             if(!(info[0].length() > 8) || !info[0].startsWith("PERSON: "))
                 throw new InvalidPropertiesFormatException("bad file format");
 
-            name = info[0].substring(8);
-            surname = info[1];
-            id = info[2];
-            birthDateStr = info[3];
-            address = info[4];
-            email = info[5];
-            phoneNumber = info[6];
+            name = checkNull(info[0].substring(8));
+            surname = checkNull(info[1]);
+            id = checkNull(info[2]);
+            birthDateStr = checkNull(info[3]);
+            address = checkNull(info[4]);
+            email = checkNull(info[5]);
+            phoneNumber = checkNull(info[6]);
 
             if(info[7].length() > 8 && info[7].startsWith("CLIENT: ")){
 
@@ -93,7 +101,7 @@ public class FileIOManager {
                 ArrayList<String> accountsIds;
                 ArrayList<String> cardsIds;
 
-                registrationDateStr = info[7].substring(8);
+                registrationDateStr = checkNull(info[7].substring(8));
 
                 if(!(info[8].length() > 10) || !(info[8].startsWith("accounts: ")))
                     throw new InvalidPropertiesFormatException("bad file format");
@@ -114,9 +122,9 @@ public class FileIOManager {
                 String job, workplace;
                 int salary;
 
-                hireDateStr = info[7].substring(10);
-                job = info[8];
-                workplace = info[9];
+                hireDateStr = checkNull(info[7].substring(10));
+                job = checkNull(info[8]);
+                workplace = checkNull(info[9]);
                 salary = Integer.parseInt(info[10]);
 
                 toReturn.add(new Employee(name, surname, birthDateStr, address, email, phoneNumber,
@@ -138,8 +146,12 @@ public class FileIOManager {
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))){
 
-            for (Account toWrite : toWriteCollection)
+            for (Account toWrite : toWriteCollection){
+
                 saveInFile(toWrite, writer);
+                writer.write('\n');
+            }
+
         }
     }
 
@@ -193,17 +205,17 @@ public class FileIOManager {
             if(!(info[0].length() > 9) || !(info[0].startsWith("ACCOUNT: ")))
                 throw new InvalidPropertiesFormatException("bad file format");
 
-            accountId = info[0].substring(9);
-            ownerId = info[1];
-            name = info[2];
-            contractAssistantId = info[3];
-            creationDate = Date.valueOf(info[4]);
+            accountId = checkNull(info[0].substring(9));
+            ownerId = checkNull(info[1]);
+            name = checkNull(info[2]);
+            contractAssistantId = checkNull(info[3]);
+            creationDate = checkNull(info[4]) == null ? null : Date.valueOf(info[4]);
             balance = Double.parseDouble(info[5]);
             flags = Byte.parseByte(info[6], 10);
 
             if(info[7].length() > 19 && info[7].startsWith("ACCOUNT WITH CARD: ")){
 
-                associatedCardId = info[7].substring(19);
+                associatedCardId = checkNull(info[7].substring(19));
 
                 if(info[8].length() > 17 && info[8].startsWith("CURRENT ACCOUNT: ")){
 
@@ -228,7 +240,7 @@ public class FileIOManager {
                 type = "SAVINGS";
 
                 interestRate = Double.parseDouble(info[7].substring(17));
-                lastUpdated = Date.valueOf(info[8]);
+                lastUpdated = checkNull(info[8]) == null ? null : Date.valueOf(info[8]);
             }
 
             else if (info[7].length() > 15 && info[7].startsWith("DEPOT ACCOUNT: ")){
@@ -236,7 +248,7 @@ public class FileIOManager {
                 type = "DEPOT";
 
                 term = Integer.parseInt(info[7].substring(15));
-                lastUpdatedTerm = Date.valueOf(info[8]);
+                lastUpdatedTerm = checkNull(info[8]) == null ? null : Date.valueOf(info[8]);
             }
 
             else
@@ -258,8 +270,12 @@ public class FileIOManager {
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))){
 
-            for (Card toWrite : toWriteCollection)
+            for (Card toWrite : toWriteCollection){
+
                 saveInFile(toWrite, writer);
+                writer.write('\n');
+            }
+
         }
     }
 
@@ -300,15 +316,59 @@ public class FileIOManager {
             String contractAssistantId, ownerId, cardId, name;
             Date emissionDate;
 
-            boolean activeStatus;
-            double creditTotalAmmount, creditAmmount;
+            boolean activeStatus = false;
+            double creditTotalAmmount = 0, creditAmmount = 0;
 
-            Account associatedAccount;
+            String associatedAccountId = null;
 
             if(!(info[0].length() > 6) || !(info[0].startsWith("CARD: ")))
                 throw new InvalidPropertiesFormatException("bad file format");
 
+            suspendedStatus = Boolean.getBoolean(info[0].substring(6));
+            pinIsInitialized = Boolean.getBoolean(info[1]);
 
+            if(info[2].equals("null"))
+                pinHash = null;
+
+            else{
+
+                info[2] = info[2].substring(1, info[2].length() - 1); // elimin "[" si "]"
+
+                String[] pinHashStr = info[2].split(", ");
+                pinHash = new byte[pinHashStr.length];
+
+                for(int i = 0; i < pinHashStr.length; i++)
+                    pinHash[i] = Byte.parseByte(pinHashStr[i], 10);
+            }
+
+            contractAssistantId = checkNull(info[3]);
+            ownerId = checkNull(info[4]);
+            cardId = checkNull(info[5]);
+            name = checkNull(info[6]);
+            emissionDate = checkNull(info[7]) == null ? null : Date.valueOf(info[7]);
+
+            if(info[8].length() > 12 && info[8].startsWith("DEBIT CARD: ")){
+
+                type = "DEBIT";
+
+                associatedAccountId = checkNull(info[8].substring(12));
+            }
+
+            else if(info[8].length() > 13 && info[8].startsWith("CREDIT CARD: ")){
+
+                type = "CREDIT";
+
+                activeStatus = Boolean.getBoolean(info[8].substring(13));
+                creditTotalAmmount = Double.parseDouble(info[9]);
+                creditAmmount = Double.parseDouble(info[10]);
+            }
+
+            else
+                throw new InvalidPropertiesFormatException("bad file format");
+
+            toReturn.add(new UnlinkedCard(type, suspendedStatus, pinIsInitialized, pinHash, contractAssistantId,
+                                            ownerId, cardId, name, emissionDate, activeStatus, creditTotalAmmount,
+                                            creditAmmount, associatedAccountId));
 
             contents = reader.readLine();
         }
@@ -317,4 +377,119 @@ public class FileIOManager {
     }
 
     //------------
+
+    // (singura) metoda care recreaza obiectele in memorie care sunt scoase din fisiere
+    // nu voi putea crea in memorie carduri sau conturi separate de clienti
+    // complexitate timp (considerand query urile pe hashmap O(1)): O(|persons| + |accounts| + |cards|)
+    public ArrayList<Person> link(ArrayList<Person> persons, ArrayList<UnlinkedAccount> accounts,
+                                  ArrayList<UnlinkedCard> cards) throws InstantiationException {
+
+        // preprocesari pentru query uri mai eficiente
+        // in cea mai mare parte creez map uri
+
+        HashMap<String, ArrayList<UnlinkedAccount>> ownerToAccount = new HashMap<>(); // [(ownerId, [(accId, acc)])]
+        HashMap<String, ArrayList<UnlinkedCard>> ownerToCard = new HashMap<>();       // [(ownerId, [(cardId, card)])]
+        HashMap<String, Employee> employeeMap = new HashMap<>();                            // [(empId, emp)]
+
+        for(UnlinkedAccount a : accounts){
+
+            if(!ownerToAccount.containsKey(a.ownerId()))
+                ownerToAccount.put(a.ownerId(), new ArrayList<>());
+
+            ownerToAccount.get(a.ownerId()).add(a);
+        }
+
+        for(UnlinkedCard c : cards){
+
+            if(!ownerToCard.containsKey(c.ownerId()))
+                ownerToCard.put(c.ownerId(), new ArrayList<>());
+
+            ownerToCard.get(c.ownerId()).add(c);
+        }
+
+        for(Person p : persons){
+
+            if(p instanceof Employee)
+                employeeMap.put(p.getId(), (Employee) p);
+        }
+
+        for(Person p : persons){
+
+            if(p instanceof Employee)
+                continue;
+
+            Client client = (Client) p;
+
+            ArrayList<UnlinkedAccount> toLinkAccounts = ownerToAccount.get(client.getId());
+            ArrayList<UnlinkedCard> toLinkCards = ownerToCard.get(client.getId());
+
+            HashMap<String, Account> linkedAccounts = new HashMap<>();
+
+            for (UnlinkedAccount ua : toLinkAccounts) {
+
+                Employee contractAssistant = employeeMap.get(ua.contractAssistantId());
+
+                switch (ua.type()) {
+
+                    case "BASIC" -> {
+                        BasicAccount ba = new BasicAccount(ua.accountId(), client, ua.name(), contractAssistant,
+                                ua.creationDate(), ua.balance(), ua.flags(), null);
+                        client.linkAccount(ba);
+
+                        linkedAccounts.put(ba.getAccountId(), ba);
+                    }
+
+                    case "CURRENT" -> {
+                        CurrentAccount ca = new CurrentAccount(ua.accountId(), client, ua.name(), contractAssistant,
+                                ua.creationDate(), ua.balance(), ua.flags(), null,
+                                ua.transactionFee(), ua.extractFee(), ua.addFee());
+                        client.linkAccount(ca);
+
+                        linkedAccounts.put(ca.getAccountId(), ca);
+                    }
+
+                    case "SAVINGS" -> {
+                        SavingsAccount sa = new SavingsAccount(ua.accountId(), client, ua.name(), contractAssistant,
+                                ua.creationDate(), ua.balance(), ua.flags(),
+                                ua.interestRate(), ua.lastUpdated());
+                        client.linkAccount(sa);
+                    }
+
+                    case "DEPOT" -> {
+                        DepotAccount da = new DepotAccount(ua.accountId(), client, ua.name(), contractAssistant,
+                                ua.creationDate(), ua.balance(), ua.flags(),
+                                ua.term(), ua.lastUpdatedTerm());
+                        client.linkAccount(da);
+                    }
+
+                    default -> throw new InstantiationException("invalid account type");
+                }
+            }
+
+            for(UnlinkedCard uc : toLinkCards){
+
+                Employee contractAssistant = employeeMap.get(uc.contractAssistantId());
+
+                switch (uc.type()){
+
+                    case "DEBIT" -> {
+                        DebitCard dc = new DebitCard(uc.suspendedStatus(), uc.pinIsInitialized(), uc.pinHash(),
+                                            contractAssistant, client, uc.cardId(), uc.name(), uc.emissionDate(),
+                                            linkedAccounts.get(uc.associatedAccountId()));
+                        client.linkCard(dc);
+                    }
+
+                    case "CREDIT" -> {
+
+                        CreditCard cc = new CreditCard(uc.suspendedStatus(), uc.pinIsInitialized(), uc.pinHash(),
+                                                contractAssistant, client, uc.cardId(), uc.name(), uc.emissionDate(),
+                                                uc.activeStatus(), uc.creditTotalAmmount(), uc.creditAmmount());
+                        client.linkCard(cc);
+                    }
+                }
+            }
+        }
+
+        return persons;
+    }
 }

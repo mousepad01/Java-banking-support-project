@@ -1,5 +1,6 @@
 package AppManager;
 
+import java.sql.Date;
 import java.util.Objects;
 
 public class CurrentAccount extends AccountWithCard{
@@ -20,6 +21,17 @@ public class CurrentAccount extends AccountWithCard{
         this.transactionFee = 0.1;
         this.addFee = 0.01;
         this.extractFee = 0.05;
+    }
+
+    protected CurrentAccount(String accountId, Client owner, String name, Employee contractAssistant,
+                             Date creationDate, double balance, byte flags, DebitCard associatedCard,
+                             double transactionFee, double extractFee, double addFee){
+
+        super(accountId, owner, name, contractAssistant, creationDate, balance, flags, associatedCard);
+
+        this.transactionFee = transactionFee;
+        this.extractFee = extractFee;
+        this.addFee = addFee;
     }
 
     private void updateFees(){
@@ -120,6 +132,11 @@ public class CurrentAccount extends AccountWithCard{
 
     @Override
     public String toString() {
-        return getName();
+        return "CurrentAccount{" +
+                super.toString() + "\n" +
+                "transactionFee=" + transactionFee +
+                ", extractFee=" + extractFee +
+                ", addFee=" + addFee +
+                '}';
     }
 }
