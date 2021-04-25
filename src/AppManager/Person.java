@@ -20,7 +20,9 @@ public abstract class Person {
 
         if(!Validator.nameOk(name) || !Validator.nameOk(surname)
                 || !Validator.emailOk(email) || !Validator.phoneNumberOk(phoneNumber)
-                ||  !Validator.pastDateOk(birthDateStr)){}
+                ||  !Validator.pastDateOk(birthDateStr))
+
+            throw new IllegalArgumentException("invalid constructor arguments");
 
         this.name = name;
         this.surname = surname;
@@ -41,7 +43,9 @@ public abstract class Person {
 
         if(!Validator.nameOk(name) || !Validator.nameOk(surname)
                 || !Validator.emailOk(email) || !Validator.phoneNumberOk(phoneNumber)
-                ||  !Validator.pastDateOk(birthDateStr)){}
+                ||  !Validator.pastDateOk(birthDateStr))
+
+            throw new IllegalArgumentException("invalid constructor arguments");
 
         this.name = name;
         this.surname = surname;
@@ -60,7 +64,8 @@ public abstract class Person {
 
     public Person(String name, String surname, String birthDateStr) {
 
-        if(!Validator.nameOk(name) || !Validator.nameOk(surname) || !Validator.pastDateOk(birthDateStr)){}
+        if(!Validator.nameOk(name) || !Validator.nameOk(surname) || !Validator.pastDateOk(birthDateStr))
+            throw new IllegalArgumentException("invalid constructor arguments");
 
         this.name = name;
         this.surname = surname;

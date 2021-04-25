@@ -42,9 +42,11 @@ public class CreditCard extends Card{
 
     protected void dereferenceCard(){
 
-        if(!isActive()){}
+        if(!isActive())
+            throw new RuntimeException("card is not active");
 
-        if(!okToClose()){}
+        if(!okToClose())
+            throw new RuntimeException("cannot close card");
 
         activeStatus = false;
         suspendedStatus = true;
@@ -52,11 +54,14 @@ public class CreditCard extends Card{
 
     public double add(double val){
 
-        if(!isActive()){}
+        if(!isActive())
+            throw new RuntimeException("card is not active");
 
-        if(isSuspended()){}
+        if(isSuspended())
+            throw new RuntimeException("card is suspended");
 
-        if(val + creditAmmount > creditTotalAmmount){}
+        if(val + creditAmmount > creditTotalAmmount)
+            throw new RuntimeException("value is too big");
 
         creditAmmount += val;
         return creditAmmount;
@@ -64,11 +69,14 @@ public class CreditCard extends Card{
 
     public double extract(double val){
 
-        if(!isActive()){}
+        if(!isActive())
+        throw new RuntimeException("card is not active");
 
-        if(isSuspended()){}
+        if(isSuspended())
+            throw new RuntimeException("card is suspended");
 
-        if(creditAmmount - val < 0){}
+        if(creditAmmount - val < 0)
+            throw new RuntimeException("value is negative");
 
         creditAmmount -= val;
         return creditAmmount;
@@ -76,14 +84,16 @@ public class CreditCard extends Card{
 
     public double getBalance(){
 
-        if(!isActive()){}
+        if(!isActive())
+            throw new RuntimeException("card is not active");
 
         return creditAmmount;
     }
 
     protected boolean okToClose(){
 
-        if(!isActive()){}
+        if(!isActive())
+            throw new RuntimeException("card is not active");
 
         if(isSuspended())
             return false;

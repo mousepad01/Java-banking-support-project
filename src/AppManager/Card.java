@@ -82,7 +82,8 @@ public abstract class Card {
 
     public int initPin(){
 
-        if(pinIsInitialized){}
+        if(pinIsInitialized)
+            throw new RuntimeException("pin is already initialized");
 
         Random randgen = new Random(System.currentTimeMillis());
         int pin = randgen.nextInt(8999) + 1000;
@@ -95,7 +96,8 @@ public abstract class Card {
 
     public void changePin(int currentPin, int newPin){
 
-        if(!checkPin(currentPin)){}
+        if(!checkPin(currentPin))
+            throw new RuntimeException("wrong pin");
 
         pinHash = getHash(newPin);
     }

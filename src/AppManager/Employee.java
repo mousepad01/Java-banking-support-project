@@ -16,7 +16,8 @@ public class Employee extends Person {
 
         super(name, surname, birthDateStr, address, email, phoneNumber, id);
 
-        if(!Validator.pastDateOk(hireDateStr) || !hireOk(job, salary, workplace)){}
+        if(!Validator.pastDateOk(hireDateStr) || !hireOk(job, salary, workplace))
+            throw new IllegalArgumentException("invalid constructor arguments");
 
         this.hireDate = Date.valueOf(hireDateStr);
         this.job = job;
@@ -28,7 +29,8 @@ public class Employee extends Person {
                     String phoneNumber, String hireDateStr, String job, String workplace, int salary) {
         super(name, surname, birthDateStr, address, email, phoneNumber);
 
-        if(!Validator.pastDateOk(hireDateStr) || !hireOk(job, salary, workplace)){}
+        if(!Validator.pastDateOk(hireDateStr) || !hireOk(job, salary, workplace))
+            throw new IllegalArgumentException("invalid constructor arguments");
 
         this.hireDate = Date.valueOf(hireDateStr);
         this.job = job;
@@ -117,25 +119,15 @@ public class Employee extends Person {
 
     private boolean hireOk(String job, int salary, String workplace){
 
-        if(workplace != "REMOTE" && !workplace.matches("office [a-z][0-9]{3}"))
+        if(!workplace.equals("REMOTE") && !workplace.matches("office [a-z][0-9]{3}"))
             return false;
 
-        switch(job){
-
-            case "SECRETARY":
-                return workplace.equals("REMOTE") && salary >= 1000 && salary <= 4000;
-
-            case "ECONOMIST":
-                return salary >= 2000 && salary <= 6000;
-
-            case "SALESMAN":
-                return workplace.equals("REMOTE") && salary >= 1900 && salary <= 5000;
-
-            case "INFORMATICIAN":
-                return salary >= 2400 && salary <= 7000;
-
-            default:
-                return false;
-        }
+        return switch (job) {
+            case "SECRETARY" -> workplace.equals("REMOTE") && salary >= 1000 && salary <= 4000;
+            case "ECONOMIST" -> salary >= 2000 && salary <= 6000;
+            case "SALESMAN" -> workplace.equals("REMOTE") && salary >= 1900 && salary <= 5000;
+            case "INFORMATICIAN" -> salary >= 2400 && salary <= 7000;
+            default -> false;
+        };
     }
 }

@@ -65,11 +65,13 @@ public class SavingsAccount extends Account{
 
     public double add(double val){
 
-        if(isSuspended()){}
+        if(isSuspended())
+            throw new RuntimeException("account is suspended");
 
         updateBalance();
 
-        if(val <= 0){}
+        if(val <= 0)
+            throw new RuntimeException("value is negative");
 
         balance += val;
         updateInterestRate();
@@ -79,13 +81,16 @@ public class SavingsAccount extends Account{
 
     public double extract(double val){
 
-        if(isSuspended()){}
+        if(isSuspended())
+            throw new RuntimeException("account is suspended");
 
-        if(val <= 0){}
+        if(val <= 0)
+            throw new RuntimeException("value is negative");
 
         updateBalance();
 
-        if(balance - val < 0){}
+        if(balance - val < 0)
+            throw new RuntimeException("value is negative");
 
         balance -= val;
         updateInterestRate();
@@ -95,18 +100,24 @@ public class SavingsAccount extends Account{
 
     public double send(double toSend, Account receiverAccountUnchecked){
 
-        if(isSuspended()){}
+        if(isSuspended())
+            throw new RuntimeException("account is suspended");
 
-        if(toSend <= 0){}
+        if(toSend <= 0)
+            throw new RuntimeException("value is negative");
 
-        if(receiverAccountUnchecked.getClass() != CurrentAccount.class){}
+        if(receiverAccountUnchecked.getClass() != CurrentAccount.class)
+            throw new IllegalArgumentException("receiver account is of wrong type");
+
         CurrentAccount receiverAccount = (CurrentAccount) receiverAccountUnchecked;
 
-        if(!receiverAccount.owner.equals(this.owner)){}
+        if(!receiverAccount.owner.equals(this.owner))
+            throw new IllegalArgumentException("receiver account does not have the same owner");
 
         updateBalance();
 
-        if(this.balance - toSend < 0){}
+        if(this.balance - toSend < 0)
+            throw new RuntimeException("value is negative");
 
         receiverAccount.add(toSend);
         this.balance -= toSend;

@@ -27,7 +27,8 @@ public abstract class Account {
 
     protected Account(String accountId, Client owner, String name, Employee contractAssistant) {
 
-        if(contractAssistant == null) {}
+        if(contractAssistant == null)
+            throw new NullPointerException("employee is not valid");
 
         this.accountId = accountId;
         this.owner = owner;

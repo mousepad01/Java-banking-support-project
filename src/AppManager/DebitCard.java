@@ -43,9 +43,11 @@ public class DebitCard extends Card{
 
     public double add(double val){
 
-        if(associatedAccount == null){}
+        if(associatedAccount == null)
+            throw new NullPointerException("no associated account");
 
-        if(isSuspended()){}
+        if(isSuspended())
+            throw new RuntimeException("card is suspended");
 
         associatedAccount.add(val);
         return associatedAccount.getBalance();
@@ -53,9 +55,11 @@ public class DebitCard extends Card{
 
     public double extract(double val){
 
-        if(associatedAccount == null){}
+        if(associatedAccount == null)
+            throw new NullPointerException("no associated account");
 
-        if(isSuspended()){}
+        if(isSuspended())
+            throw new RuntimeException("card is suspended");
 
         associatedAccount.extract(val);
         return associatedAccount.getBalance();
@@ -63,9 +67,11 @@ public class DebitCard extends Card{
 
     public double send(double toSend, Account receiverAccountUnchecked){
 
-        if(associatedAccount == null){}
+        if(associatedAccount == null)
+            throw new NullPointerException("no associated account");
 
-        if(isSuspended()){}
+        if(isSuspended())
+            throw new RuntimeException("card is suspended");
 
         associatedAccount.send(toSend, receiverAccountUnchecked);
         return associatedAccount.getBalance();
@@ -73,14 +79,16 @@ public class DebitCard extends Card{
 
     public double getBalance(){
 
-        if(associatedAccount == null){}
+        if(associatedAccount == null)
+            throw new NullPointerException("no associated account");
 
         return associatedAccount.getBalance();
     }
 
     public String getAccountName(){
 
-        if(associatedAccount == null){}
+        if(associatedAccount == null)
+            throw new NullPointerException("no associated account");
 
         return associatedAccount.getName();
     }

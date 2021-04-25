@@ -72,11 +72,13 @@ public class DepotAccount extends Account{
 
     public double add(double val){
 
-        if(isSuspended()){}
+        if(isSuspended())
+            throw new RuntimeException("account is suspended");
 
         updateBalance(true);
 
-        if(val <= 0){}
+        if(val <= 0)
+            throw new RuntimeException("value is negative");
 
         balance += val;
 
@@ -85,13 +87,16 @@ public class DepotAccount extends Account{
 
     public double extract(double val){
 
-        if(isSuspended()){}
+        if(isSuspended())
+            throw new RuntimeException("account is suspended");
 
-        if(val <= 0){}
+        if(val <= 0)
+            throw new RuntimeException("value is negative");
 
         updateBalance(true);
 
-        if(balance - val < 0){}
+        if(balance - val < 0)
+            throw new RuntimeException("value is negative");
 
         balance -= val;
 
@@ -100,18 +105,24 @@ public class DepotAccount extends Account{
 
     public double send(double toSend, Account receiverAccountUnchecked){
 
-        if(isSuspended()){}
+        if(isSuspended())
+            throw new RuntimeException("account is suspended");
 
-        if(toSend <= 0){}
+        if(toSend <= 0)
+            throw new RuntimeException("value is negative");
 
-        if(receiverAccountUnchecked.getClass() != CurrentAccount.class){}
+        if(receiverAccountUnchecked.getClass() != CurrentAccount.class)
+            throw new IllegalArgumentException("receiver account is of wrong type");
+
         CurrentAccount receiverAccount = (CurrentAccount) receiverAccountUnchecked;
 
-        if(!receiverAccount.owner.equals(this.owner)){}
+        if(!receiverAccount.owner.equals(this.owner))
+            throw new IllegalArgumentException("receiver account does not have the same owner");
 
         updateBalance(true);
 
-        if(this.balance - toSend < 0){}
+        if(this.balance - toSend < 0)
+            throw new RuntimeException("value is negative");
 
         receiverAccount.add(toSend);
         this.balance -= toSend;
@@ -123,17 +134,26 @@ public class DepotAccount extends Account{
     // au fost efectuate tranzactii (si deci dobanda pe acel interval nu va mai fi oferita)
 
     public boolean suspendedInterest(){
-        if(isSuspended()){}
+
+        if(isSuspended())
+            throw new RuntimeException("account is suspended");
+
         return (flags & 2) == 2;
     }
 
     public void suspendInterest(){
-        if(isSuspended()){}
+
+        if(isSuspended())
+            throw new RuntimeException("account is suspended");
+
         this.flags |= 2;
     }
 
     public void dropSuspendedInterest(){
-        if(isSuspended()){}
+
+        if(isSuspended())
+            throw new RuntimeException("account is suspended");
+
         this.flags &= 0b11111101;
     }
 

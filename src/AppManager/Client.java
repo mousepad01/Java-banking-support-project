@@ -21,7 +21,8 @@ public class Client extends Person {
 
         super(name, surname, birthDateStr, address, email, phoneNumber, id);
 
-        if(!Validator.pastDateOk(registrationDateStr)){}
+        if(!Validator.pastDateOk(registrationDateStr))
+            throw new IllegalArgumentException("invalid constructor arguments");
 
         this.registrationDate = Date.valueOf(registrationDateStr);
 
@@ -119,7 +120,7 @@ public class Client extends Person {
         this.cards.put(toLink.getCardId(), toLink);
     }
 
-    public BasicAccount createBasicAccount(String name, Employee contractAssistant){
+    public BasicAccount createBasicAccount(String name, Employee contractAssistant) {
 
         BasicAccount newBasicAccount = new BasicAccount(IdGenerator.getAccountId("BASIC"), this, name, contractAssistant);
         this.accounts.put(name, newBasicAccount);
@@ -127,7 +128,7 @@ public class Client extends Person {
         return newBasicAccount;
     }
 
-    public CurrentAccount createCurrentAccount(String name, Employee contractAssistant){
+    public CurrentAccount createCurrentAccount(String name, Employee contractAssistant) {
 
         CurrentAccount newCurrentAccount = new CurrentAccount(IdGenerator.getAccountId("CURRENT"), this, name, contractAssistant);
         this.accounts.put(name, newCurrentAccount);
@@ -135,7 +136,7 @@ public class Client extends Person {
         return newCurrentAccount;
     }
 
-    public SavingsAccount createSavingsAccount(String name, Employee contractAssistant){
+    public SavingsAccount createSavingsAccount(String name, Employee contractAssistant) {
 
         SavingsAccount newSavingsAccount = new SavingsAccount(IdGenerator.getAccountId("SAVINGS"), this, name, contractAssistant);
         this.accounts.put(name, newSavingsAccount);
@@ -143,7 +144,7 @@ public class Client extends Person {
         return newSavingsAccount;
     }
 
-    public DepotAccount createDepotAccount(String name, Employee contractAssistant, String type, double initialValue){
+    public DepotAccount createDepotAccount(String name, Employee contractAssistant, String type, double initialValue) {
 
         DepotAccount newDepotAccount = new DepotAccount(IdGenerator.getAccountId("DEPOT"), this, name, contractAssistant, type, initialValue);
         this.accounts.put(name, newDepotAccount);
@@ -151,13 +152,15 @@ public class Client extends Person {
         return newDepotAccount;
     }
 
-    public DebitCard createDebitCard(String accountName, String cardName, Employee contractAssistant){
+    public DebitCard createDebitCard(String accountName, String cardName, Employee contractAssistant) {
 
         Account toAssociateUnchecked = accounts.get(accountName);
 
-        if(toAssociateUnchecked == null){}
+        if(toAssociateUnchecked == null)
+            throw new NullPointerException("associated account does not exist");
 
-        if(toAssociateUnchecked.getClass() != BasicAccount.class && toAssociateUnchecked.getClass() != CurrentAccount.class){}
+        if(toAssociateUnchecked.getClass() != BasicAccount.class && toAssociateUnchecked.getClass() != CurrentAccount.class)
+            throw new IllegalArgumentException("associated account is of wrong type");
 
         AccountWithCard toAssociate = (AccountWithCard) toAssociateUnchecked;
         DebitCard newDebitCard = toAssociate.associateNewCard(cardName, contractAssistant);
@@ -175,7 +178,7 @@ public class Client extends Person {
         return newCreditCard;
     }
 
-    public BasicAccount createBasicAccount(String name, Employee contractAssistant, String accountId){
+    public BasicAccount createBasicAccount(String name, Employee contractAssistant, String accountId) {
 
         BasicAccount newBasicAccount = new BasicAccount(accountId, this, name, contractAssistant);
         this.accounts.put(name, newBasicAccount);
@@ -183,7 +186,7 @@ public class Client extends Person {
         return newBasicAccount;
     }
 
-    public CurrentAccount createCurrentAccount(String name, Employee contractAssistant, String accountId){
+    public CurrentAccount createCurrentAccount(String name, Employee contractAssistant, String accountId) {
 
         CurrentAccount newCurrentAccount = new CurrentAccount(accountId, this, name, contractAssistant);
         this.accounts.put(name, newCurrentAccount);
@@ -191,7 +194,7 @@ public class Client extends Person {
         return newCurrentAccount;
     }
 
-    public SavingsAccount createSavingsAccount(String name, Employee contractAssistant, String accountId){
+    public SavingsAccount createSavingsAccount(String name, Employee contractAssistant, String accountId) {
 
         SavingsAccount newSavingsAccount = new SavingsAccount(accountId, this, name, contractAssistant);
         this.accounts.put(name, newSavingsAccount);
@@ -199,7 +202,7 @@ public class Client extends Person {
         return newSavingsAccount;
     }
 
-    public DepotAccount createDepotAccount(String name, Employee contractAssistant, String type, double initialValue, String accountId){
+    public DepotAccount createDepotAccount(String name, Employee contractAssistant, String type, double initialValue, String accountId) {
 
         DepotAccount newDepotAccount = new DepotAccount(accountId, this, name, contractAssistant, type, initialValue);
         this.accounts.put(name, newDepotAccount);
@@ -207,13 +210,15 @@ public class Client extends Person {
         return newDepotAccount;
     }
 
-    public DebitCard createDebitCard(String accountName, String cardName, Employee contractAssistant, String cardId){
+    public DebitCard createDebitCard(String accountName, String cardName, Employee contractAssistant, String cardId) {
 
         Account toAssociateUnchecked = accounts.get(accountName);
 
-        if(toAssociateUnchecked == null){}
+        if(toAssociateUnchecked == null)
+            throw new NullPointerException("associated account does not exist");
 
-        if(toAssociateUnchecked.getClass() != BasicAccount.class && toAssociateUnchecked.getClass() != CurrentAccount.class){}
+        if(toAssociateUnchecked.getClass() != BasicAccount.class && toAssociateUnchecked.getClass() != CurrentAccount.class)
+            throw new IllegalArgumentException("associated account is of wrong type");
 
         AccountWithCard toAssociate = (AccountWithCard) toAssociateUnchecked;
         DebitCard newDebitCard = toAssociate.associateNewCard(cardName, contractAssistant, cardId);
@@ -234,7 +239,8 @@ public class Client extends Person {
     public void removeDebitCard(String cardName){
 
         DebitCard toRemove = (DebitCard) cards.get(cardName);
-        if(toRemove == null){}
+        if(toRemove == null)
+            throw new NullPointerException("card to remove does not exist");
 
         AccountWithCard associatedAccount = (AccountWithCard) accounts.get(toRemove.getAccountName());
         associatedAccount.removeCard();
@@ -245,7 +251,8 @@ public class Client extends Person {
     public void removeCreditCard(String cardName){
 
         CreditCard toRemove = (CreditCard) cards.get(cardName);
-        if(toRemove == null){}
+        if(toRemove == null)
+            throw new NullPointerException("card to remove does not exist");
 
         toRemove.dereferenceCard();
 
@@ -256,9 +263,8 @@ public class Client extends Person {
 
         Account toRemove = accounts.get(name);
 
-        if(toRemove == null){};
-
-        if(toRemove.getBalance() < 0){}
+        if(toRemove == null)
+            throw new NullPointerException("account to remove does not exist");
 
         accounts.remove(name);
     }

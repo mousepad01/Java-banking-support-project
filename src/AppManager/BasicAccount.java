@@ -29,11 +29,14 @@ public class BasicAccount extends AccountWithCard {
 
     public double add(double val){
 
-        if(isSuspended()){}
+        if(isSuspended())
+            throw new RuntimeException("account is suspended");
 
-        if(val <= 0){}
+        if(val <= 0)
+            throw new RuntimeException("value is negative");
 
-        if(val + this.balance > MAX_BALANCE){}
+        if(val + this.balance > MAX_BALANCE)
+            throw new RuntimeException("value is too big");
 
         this.balance += val;
         return this.balance;
@@ -41,11 +44,14 @@ public class BasicAccount extends AccountWithCard {
 
     public double extract(double val){
 
-        if(isSuspended()){}
+        if(isSuspended())
+            throw new RuntimeException("account is suspended");
 
-        if(val <= 0){}
+        if(val <= 0)
+            throw new RuntimeException("value is negative");
 
-        if(this.balance - val < 0){}
+        if(this.balance - val < 0)
+            throw new RuntimeException("value is negative");
 
         this.balance -= val;
         return this.balance;
@@ -53,14 +59,16 @@ public class BasicAccount extends AccountWithCard {
 
     public double send(double toSend, Account receiverAccountUnchecked){
 
-        if(isSuspended()){}
+        if(isSuspended())
+            throw new RuntimeException("account is suspended");
 
-        if(receiverAccountUnchecked.getClass() != getClass()){}
+        if(receiverAccountUnchecked.getClass() != getClass())
+            throw new IllegalArgumentException("receiver account is of wrong type");
+
         BasicAccount receiverAccount = (BasicAccount) receiverAccountUnchecked;
 
-        if(toSend <= 0){}
-
-        if(receiverAccount.getClass() != getClass()){}
+        if(toSend <= 0)
+            throw new RuntimeException("value is negative");
 
         double fee = TRANSACTION_FEE;
 
@@ -68,9 +76,11 @@ public class BasicAccount extends AccountWithCard {
             fee = 0;
         }
 
-        if(this.balance - (toSend * (1 + fee)) < 0){}
+        if(this.balance - (toSend * (1 + fee)) < 0)
+            throw new RuntimeException("value is negative");
 
-        if(toSend + receiverAccount.balance > MAX_BALANCE){}
+        if(toSend + receiverAccount.balance > MAX_BALANCE)
+            throw new RuntimeException("value is too big");
 
         receiverAccount.add(toSend);
         this.balance -= toSend * (1 + fee);
