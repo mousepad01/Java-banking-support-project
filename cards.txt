@@ -1,0 +1,3 @@
+CARD: false;true;[-112, -114, 42, 45, -43, 1, -98, 29, 53, 52, 47, -68, 91, -11, 53, 55, -49, 22, 94, 101, 86, 116, -96, -34, 78, 51, -28, -57, 70, -24, -74, -125];id01;192837492020;cardD;card de debit;2021-05-19;DEBIT CARD: cont1;
+CARD: false;false;null;id01;192837492020;cr1;card de credit;2021-05-19;CREDIT CARD: true;1260.0;1200.0;
+CARD: false;false;null;id01;192837492020;cr2;credit pt ceva;2021-05-19;CREDIT CARD: true;3675.0;3500.0;

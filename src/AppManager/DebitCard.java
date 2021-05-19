@@ -11,16 +11,16 @@ import java.util.Arrays;
 
 public class DebitCard extends Card{
 
-    private Account associatedAccount;
+    private AccountWithCard associatedAccount;
 
-    protected DebitCard(Account associatedAccount, Employee contractAssistant, String name, String cardId) {
+    protected DebitCard(AccountWithCard associatedAccount, Employee contractAssistant, String name, String cardId) {
         super(name, associatedAccount.getOwner(), contractAssistant, cardId);
 
         this.associatedAccount = associatedAccount;
     }
 
     protected DebitCard(boolean suspendedStatus, boolean pinIsInitialized, byte[] pinHash, Employee contractAssistant,
-                        Client owner, String cardId, String name, Date emissionDate, Account associatedAccount){
+                        Client owner, String cardId, String name, Date emissionDate, AccountWithCard associatedAccount){
 
         super(suspendedStatus, pinIsInitialized, pinHash, contractAssistant, owner, cardId,
                 name, emissionDate);

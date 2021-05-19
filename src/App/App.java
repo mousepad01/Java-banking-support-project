@@ -1,15 +1,12 @@
 package App;
+
+import AppIO.*;
 import AppManager.*;
 
-import java.io.File;
-import java.io.IOError;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 //import java.time.*;
 
@@ -27,12 +24,14 @@ public class App {
 
     public static void main(String[] args) {
 
-        Client client;
-        client = new Client("a", "b", "2015-12-29");
+        new DbInit();
+
+        /*Client client;
+        client = new Client("Aa", "Bb", "2000-12-29");
 
         Employee emp;
-        emp = new Employee("a", "b", "2015-12-29", "str 1", "a@y",
-                "0713444555", "2018-10-09", "INFORMATICIAN",
+        emp = new Employee("Aa", "Bb", "2001-12-29", "str 1", "a@y",
+                "0713444555", "1999-10-09", "INFORMATICIAN",
                 "REMOTE", "id01", 4000);
 
         CurrentAccount cont = client.createCurrentAccount("cont curent", emp, "cont1");
@@ -127,6 +126,6 @@ public class App {
         }
 
         Logger log = Logger.getLogger();
-        log.endLogging();
+        log.endLogging();*/
     }
 }

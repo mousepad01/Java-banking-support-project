@@ -1,4 +1,4 @@
-package AppManager;
+package AppIO;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

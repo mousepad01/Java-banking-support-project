@@ -16,18 +16,21 @@ public class Validator {
     }
 
     public static boolean emailOk(String toCheck){
-        return toCheck.matches("^(.+)@(.+)$");
+        return toCheck == null || toCheck.matches("^(.+)@(.+)$");
     }
 
     public static boolean phoneNumberOk(String toCheck){
-        return toCheck.matches("(0)[1-9][0-9]{8}");
+        return toCheck == null || toCheck.matches("(0)[1-9][0-9]{8}");
     }
 
     public static boolean ageOk(int toCheck){
-        return toCheck >= 18;
+        return toCheck == 0 || toCheck >= 18;
     }
 
     public static boolean ageOk(Date toCheck){
+
+        if(toCheck == null)
+            return true;
 
         Date currentDate = new Date(System.currentTimeMillis());
         long milisecAge = currentDate.getTime() - toCheck.getTime();
@@ -41,6 +44,9 @@ public class Validator {
 
     public static boolean pastDateOk(Date toCheck){
 
+        if(toCheck == null)
+            return true;
+
         Date currentDate = new Date(System.currentTimeMillis());
         long checkDateMilisec = currentDate.getTime() - toCheck.getTime();
         return checkDateMilisec > 0;
@@ -52,6 +58,9 @@ public class Validator {
     }
 
     public static boolean futureDateOk(Date toCheck){
+
+        if(toCheck == null)
+            return true;
 
         Date currentDate = new Date(System.currentTimeMillis());
         long checkDateMilisec = currentDate.getTime() - toCheck.getTime();

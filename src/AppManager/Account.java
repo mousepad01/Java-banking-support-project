@@ -1,5 +1,7 @@
 package AppManager;
 
+import AppIO.Logger;
+
 import java.sql.Date;
 import java.util.Objects;
 

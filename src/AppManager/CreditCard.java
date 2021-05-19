@@ -17,27 +17,27 @@ public class CreditCard extends Card{
 
     private boolean activeStatus;
 
-    private final double creditTotalAmmount;
-    private double creditAmmount;
+    private final double creditTotalAmount;
+    private double creditAmount;
 
     protected CreditCard(Client owner, String cardId, String name, Employee contractAssistant, double requestedAmmount) {
         super(name, owner, contractAssistant, cardId);
 
-        this.creditTotalAmmount = requestedAmmount * (1 + FEE);
-        this.creditAmmount = requestedAmmount;
+        this.creditTotalAmount = requestedAmmount * (1 + FEE);
+        this.creditAmount = requestedAmmount;
         this.activeStatus = true;
     }
 
     protected CreditCard(boolean suspendedStatus, boolean pinIsInitialized, byte[] pinHash, Employee contractAssistant,
                          Client owner, String cardId, String name, Date emissionDate, boolean activeStatus,
-                         double creditTotalAmmount, double creditAmmount){
+                         double creditTotalAmount, double creditAmount){
 
         super(suspendedStatus, pinIsInitialized, pinHash, contractAssistant, owner, cardId,
                 name, emissionDate);
 
         this.activeStatus = activeStatus;
-        this.creditTotalAmmount = creditTotalAmmount;
-        this.creditAmmount = creditAmmount;
+        this.creditTotalAmount = creditTotalAmount;
+        this.creditAmount = creditAmount;
     }
 
     protected void dereferenceCard(){
@@ -60,11 +60,11 @@ public class CreditCard extends Card{
         if(isSuspended())
             throw new RuntimeException("card is suspended");
 
-        if(val + creditAmmount > creditTotalAmmount)
+        if(val + creditAmount > creditTotalAmount)
             throw new RuntimeException("value is too big");
 
-        creditAmmount += val;
-        return creditAmmount;
+        creditAmount += val;
+        return creditAmount;
     }
 
     public double extract(double val){
@@ -75,11 +75,11 @@ public class CreditCard extends Card{
         if(isSuspended())
             throw new RuntimeException("card is suspended");
 
-        if(creditAmmount - val < 0)
+        if(creditAmount - val < 0)
             throw new RuntimeException("value is negative");
 
-        creditAmmount -= val;
-        return creditAmmount;
+        creditAmount -= val;
+        return creditAmount;
     }
 
     public double getBalance(){
@@ -87,7 +87,7 @@ public class CreditCard extends Card{
         if(!isActive())
             throw new RuntimeException("card is not active");
 
-        return creditAmmount;
+        return creditAmount;
     }
 
     protected boolean okToClose(){
@@ -98,7 +98,7 @@ public class CreditCard extends Card{
         if(isSuspended())
             return false;
 
-        return creditTotalAmmount - creditAmmount < 0.01; // ca sa nu am probleme cu zecimale foarte multe
+        return creditTotalAmount - creditAmount < 0.01; // ca sa nu am probleme cu zecimale foarte multe
     }
 
     public boolean isActive(){
@@ -111,8 +111,8 @@ public class CreditCard extends Card{
         serialization.append("CREDIT CARD: ");
 
         serialization.append(activeStatus).append(";");
-        serialization.append(creditTotalAmmount).append(";");
-        serialization.append(creditAmmount).append(";");
+        serialization.append(creditTotalAmount).append(";");
+        serialization.append(creditAmount).append(";");
 
         return serialization.toString();
     }
@@ -122,8 +122,8 @@ public class CreditCard extends Card{
         return "CreditCard{" +
                 super.toString() + "\n" +
                 "activeStatus=" + activeStatus +
-                ", creditTotalAmmount=" + creditTotalAmmount +
-                ", creditAmmount=" + creditAmmount +
+                ", creditTotalAmount=" + creditTotalAmount +
+                ", creditAmount=" + creditAmount +
                 '}';
     }
 }

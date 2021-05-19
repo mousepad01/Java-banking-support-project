@@ -13,6 +13,9 @@ package AppManager;
 * relatia client-cont-card va trebui reconstruita in aceasta ordine:
 * client, angajat responsabil cu acele contracte, conturile persoanei, cardurile persoanei */
 
+import AppIO.UnlinkedAccount;
+import AppIO.UnlinkedCard;
+
 import java.io.*;
 import java.sql.Date;
 import java.util.*;
@@ -475,7 +478,7 @@ public class FileIOManager {
                     case "DEBIT" -> {
                         DebitCard dc = new DebitCard(uc.suspendedStatus(), uc.pinIsInitialized(), uc.pinHash(),
                                             contractAssistant, client, uc.cardId(), uc.name(), uc.emissionDate(),
-                                            linkedAccounts.get(uc.associatedAccountId()));
+                                            (AccountWithCard) linkedAccounts.get(uc.associatedAccountId()));
                         client.linkCard(dc);
                     }
 

@@ -1,4 +1,4 @@
-package AppManager;
+package AppIO;
 
 /* clasa pe post de obiect temporar
  * in urma extragerii din fisiere sau din db */
