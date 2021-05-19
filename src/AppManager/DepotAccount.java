@@ -194,6 +194,14 @@ public class DepotAccount extends Account{
         return serialization.toString();
     }
 
+    public Date getLastUpdatedTerm(){
+        return this.lastUpdatedTerm;
+    }
+
+    public int getTerm(){
+        return this.term;
+    }
+
     @Override
     public void suspendAccount(){
         updateBalance(false);

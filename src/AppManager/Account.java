@@ -79,6 +79,10 @@ public abstract class Account {
         return name;
     }
 
+    public Byte getFlags(){
+        return flags;
+    }
+
     public Date getCreationDate() {
         return creationDate;
     }

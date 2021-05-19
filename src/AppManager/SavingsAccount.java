@@ -157,6 +157,14 @@ public class SavingsAccount extends Account{
         return serialization.toString();
     }
 
+    public double getInterestRate(){
+        return this.interestRate;
+    }
+
+    public Date getLastUpdated(){
+        return this.lastUpdated;
+    }
+
     @Override
     public void suspendAccount(){
         updateBalance();

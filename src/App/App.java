@@ -26,6 +26,8 @@ public class App {
 
         new DbInit();
 
+        // TODO: manage chei duplicate in bd
+
         Client client;
         client = new Client("Aa", "Bb", "2000-12-29");
 
