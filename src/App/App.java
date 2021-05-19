@@ -26,7 +26,7 @@ public class App {
 
         new DbInit();
 
-        /*Client client;
+        Client client;
         client = new Client("Aa", "Bb", "2000-12-29");
 
         Employee emp;
@@ -34,7 +34,11 @@ public class App {
                 "0713444555", "1999-10-09", "INFORMATICIAN",
                 "REMOTE", "id01", 4000);
 
-        CurrentAccount cont = client.createCurrentAccount("cont curent", emp, "cont1");
+        PersonDb db = new PersonDb();
+
+        db.add(emp);
+
+        /*CurrentAccount cont = client.createCurrentAccount("cont curent", emp, "cont1");
         //CurrentAccount cont = (CurrentAccount) client.getAccount("cont curent");
 
         cont.add(2700);
