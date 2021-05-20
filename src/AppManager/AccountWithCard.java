@@ -25,7 +25,9 @@ public abstract class AccountWithCard extends Account{
 
         if(associatedCard == null){
 
-            associatedCard = new DebitCard(this, contractAssistant, name, IdGenerator.getCardId("DEBIT"));
+            IdGenerator idGenerator = IdGenerator.getIdGenerator();
+
+            associatedCard = new DebitCard(this, contractAssistant, name, idGenerator.getCardId("DEBIT"));
             return associatedCard;
         }
         // else EXCEPTIE

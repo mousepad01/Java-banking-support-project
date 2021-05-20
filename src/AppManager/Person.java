@@ -52,7 +52,8 @@ public abstract class Person {
         this.name = name;
         this.surname = surname;
 
-        this.id = IdGenerator.getPersonId();
+        IdGenerator idGenerator = IdGenerator.getIdGenerator();
+        this.id = idGenerator.getPersonId();
 
         this.birthDate = birthDateStr == null ? null : Date.valueOf(birthDateStr);
 
@@ -72,7 +73,8 @@ public abstract class Person {
         this.name = name;
         this.surname = surname;
 
-        this.id = IdGenerator.getPersonId();
+        IdGenerator idGenerator = IdGenerator.getIdGenerator();
+        this.id = idGenerator.getPersonId();
 
         this.birthDate = Date.valueOf(birthDateStr);
 

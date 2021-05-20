@@ -122,7 +122,9 @@ public class Client extends Person {
 
     public BasicAccount createBasicAccount(String name, Employee contractAssistant) {
 
-        BasicAccount newBasicAccount = new BasicAccount(IdGenerator.getAccountId("BASIC"), this, name, contractAssistant);
+        IdGenerator idGenerator = IdGenerator.getIdGenerator();
+
+        BasicAccount newBasicAccount = new BasicAccount(idGenerator.getAccountId("BASIC"), this, name, contractAssistant);
         this.accounts.put(name, newBasicAccount);
 
         return newBasicAccount;
@@ -130,7 +132,9 @@ public class Client extends Person {
 
     public CurrentAccount createCurrentAccount(String name, Employee contractAssistant) {
 
-        CurrentAccount newCurrentAccount = new CurrentAccount(IdGenerator.getAccountId("CURRENT"), this, name, contractAssistant);
+        IdGenerator idGenerator = IdGenerator.getIdGenerator();
+
+        CurrentAccount newCurrentAccount = new CurrentAccount(idGenerator.getAccountId("CURRENT"), this, name, contractAssistant);
         this.accounts.put(name, newCurrentAccount);
 
         return newCurrentAccount;
@@ -138,7 +142,9 @@ public class Client extends Person {
 
     public SavingsAccount createSavingsAccount(String name, Employee contractAssistant) {
 
-        SavingsAccount newSavingsAccount = new SavingsAccount(IdGenerator.getAccountId("SAVINGS"), this, name, contractAssistant);
+        IdGenerator idGenerator = IdGenerator.getIdGenerator();
+
+        SavingsAccount newSavingsAccount = new SavingsAccount(idGenerator.getAccountId("SAVINGS"), this, name, contractAssistant);
         this.accounts.put(name, newSavingsAccount);
 
         return newSavingsAccount;
@@ -146,7 +152,9 @@ public class Client extends Person {
 
     public DepotAccount createDepotAccount(String name, Employee contractAssistant, String type, double initialValue) {
 
-        DepotAccount newDepotAccount = new DepotAccount(IdGenerator.getAccountId("DEPOT"), this, name, contractAssistant, type, initialValue);
+        IdGenerator idGenerator = IdGenerator.getIdGenerator();
+
+        DepotAccount newDepotAccount = new DepotAccount(idGenerator.getAccountId("DEPOT"), this, name, contractAssistant, type, initialValue);
         this.accounts.put(name, newDepotAccount);
 
         return newDepotAccount;
@@ -172,7 +180,9 @@ public class Client extends Person {
 
     public CreditCard createCreditCard(String cardName, double requestedAmmount, Employee contractAssistant){
 
-        CreditCard newCreditCard = new CreditCard(this, IdGenerator.getCardId("CREDIT"), cardName, contractAssistant, requestedAmmount);
+        IdGenerator idGenerator = IdGenerator.getIdGenerator();
+
+        CreditCard newCreditCard = new CreditCard(this, idGenerator.getCardId("CREDIT"), cardName, contractAssistant, requestedAmmount);
         cards.put(cardName, newCreditCard);
 
         return newCreditCard;

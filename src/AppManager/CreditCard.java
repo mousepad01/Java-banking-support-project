@@ -105,6 +105,14 @@ public class CreditCard extends Card{
         return activeStatus;
     }
 
+    public double getTotalAmount(){
+        return creditTotalAmount;
+    }
+
+    public double getAmount(){
+        return creditAmount;
+    }
+
     public String getSerialization(){
 
         StringBuilder serialization = new StringBuilder(super.getSerialization());

@@ -70,6 +70,10 @@ public abstract class Card {
         return name;
     }
 
+    public boolean isPinInitialized(){
+        return pinIsInitialized;
+    }
+
     public boolean isSuspended(){
         return suspendedStatus;
     }
@@ -160,6 +164,10 @@ public abstract class Card {
         serialization.append(emissionDate.toString()).append(";");
 
         return serialization.toString();
+    }
+
+    public byte[] getPinHash(){
+        return pinHash;
     }
 
     @Override

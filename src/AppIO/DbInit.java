@@ -6,7 +6,7 @@ import java.sql.Statement;
 
 public class DbInit {
 
-    private void execute(String toExecute){
+    private static void execute(String toExecute){
 
         try (Connection db = DbConfig.dbConnection()) {
 
@@ -18,9 +18,20 @@ public class DbInit {
         }
     }
 
-    public DbInit() {
+    public static void init() {
 
-        this.execute("CREATE TABLE IF NOT EXISTS person(\n" +
+        execute("CREATE TABLE IF NOT EXISTS id_counters(\n" +
+                "\tcounters_session_id VARCHAR(10) PRIMARY KEY,\n" +
+                "\tperson_ct BIGINT NOT NULL,\n" +
+                "    basic_ct BIGINT NOT NULL,\n" +
+                "    current_ct BIGINT NOT NULL,\n" +
+                "    savings_ct BIGINT NOT NULL,\n" +
+                "    depot_ct BIGINT NOT NULL,\n" +
+                "    credit_ct BIGINT NOT NULL,\n" +
+                "    debit_ct BIGINT NOT NULL\n" +
+                ");");
+
+        execute("CREATE TABLE IF NOT EXISTS person(\n" +
                             "    id VARCHAR(12) PRIMARY KEY,\n" +
                             "    name VARCHAR(200),\n" +
                             "    surname VARCHAR(200),\n" +
@@ -30,7 +41,7 @@ public class DbInit {
                             "    phone VARCHAR(10)\n" +
                             ");");
 
-        this.execute("CREATE TABLE IF NOT EXISTS employee(\n" +
+        execute("CREATE TABLE IF NOT EXISTS employee(\n" +
                             "    id VARCHAR(12) PRIMARY KEY,\n" +
                             "    hire_date DATETIME,\n" +
                             "    job VARCHAR(100),\n" +
@@ -39,50 +50,50 @@ public class DbInit {
                             "    FOREIGN KEY(id) REFERENCES person(id)\n" +
                             ");");
 
-        this.execute("CREATE TABLE IF NOT EXISTS client(\n" +
+        execute("CREATE TABLE IF NOT EXISTS client(\n" +
                 "\tid VARCHAR(12) PRIMARY KEY,\n" +
                 "    registration_date DATETIME,\n" +
                 "    FOREIGN KEY(id) REFERENCES person(id)\n" +
                 ");");
 
-        this.execute("CREATE TABLE IF NOT EXISTS account(\n" +
+        execute("CREATE TABLE IF NOT EXISTS account(\n" +
                 "\tid VARCHAR(12) PRIMARY KEY,\n" +
                 "    owner_id VARCHAR(12),\n" +
                 "    name VARCHAR(200),\n" +
                 "    emp_assistant_id VARCHAR(12),\n" +
-                "    creationdate DATETIME,\n" +
+                "    creation_date DATETIME,\n" +
                 "    balance DOUBLE,\n" +
                 "    flags TINYINT,\n" +
                 "    FOREIGN KEY(owner_id) REFERENCES client(id),\n" +
                 "    FOREIGN KEY(emp_assistant_id) REFERENCES employee(id)\n" +
                 ");");
 
-        this.execute("CREATE TABLE IF NOT EXISTS depot_account(\n" +
+        execute("CREATE TABLE IF NOT EXISTS depot_account(\n" +
                 "\tid VARCHAR(12) PRIMARY KEY,\n" +
                 "    term INT,\n" +
                 "    last_updated_term DATETIME,\n" +
                 "    FOREIGN KEY(id) REFERENCES account(id)\n" +
                 ");");
 
-        this.execute("CREATE TABLE IF NOT EXISTS savings_account(\n" +
+        execute("CREATE TABLE IF NOT EXISTS savings_account(\n" +
                 "\tid VARCHAR(12) PRIMARY KEY,\n" +
                 "    interest_rate DOUBLE,\n" +
                 "    last_updated DATETIME,\n" +
                 "    FOREIGN KEY(id) REFERENCES account(id)\n" +
                 ");");
 
-        this.execute("CREATE TABLE IF NOT EXISTS account_with_card(\n" +
+        execute("CREATE TABLE IF NOT EXISTS account_with_card(\n" +
                 "\tid VARCHAR(12) PRIMARY KEY,\n" +
                 "    card_id VARCHAR(12),\n" +
                 "    FOREIGN KEY(id) REFERENCES account(id)\n" +
                 ");");
 
-        this.execute("CREATE TABLE IF NOT EXISTS basic_account(\n" +
+        execute("CREATE TABLE IF NOT EXISTS basic_account(\n" +
                 "\tid VARCHAR(12) PRIMARY KEY,\n" +
                 "    FOREIGN KEY(id) REFERENCES account_with_card(id)\n" +
                 ");");
 
-        this.execute("CREATE TABLE IF NOT EXISTS current_account(\n" +
+        execute("CREATE TABLE IF NOT EXISTS current_account(\n" +
                 "\tid VARCHAR(12) PRIMARY KEY,\n" +
                 "    transfer_fee DOUBLE,\n" +
                 "    extract_fee DOUBLE,\n" +
@@ -90,7 +101,7 @@ public class DbInit {
                 "    FOREIGN KEY(id) REFERENCES account_with_card(id)\n" +
                 ");");
 
-        this.execute("CREATE TABLE IF NOT EXISTS card(\n" +
+        execute("CREATE TABLE IF NOT EXISTS card(\n" +
                 "\tid VARCHAR(12) PRIMARY KEY,\n" +
                 "    emp_assistant_id VARCHAR(12),\n" +
                 "    owner_id VARCHAR(12),\n" +
@@ -103,14 +114,14 @@ public class DbInit {
                 "    FOREIGN KEY(emp_assistant_id) REFERENCES employee(id)\n" +
                 ");");
 
-        this.execute("CREATE TABLE IF NOT EXISTS debit_card(\n" +
+        execute("CREATE TABLE IF NOT EXISTS debit_card(\n" +
                 "\tid VARCHAR(12) PRIMARY KEY,\n" +
                 "    account_id VARCHAR(12),\n" +
                 "    FOREIGN KEY(id) REFERENCES card(id),\n" +
                 "    FOREIGN KEY(account_id) REFERENCES account_with_card(id)\n" +
                 ");");
 
-        this.execute("CREATE TABLE IF NOT EXISTS credit_card(\n" +
+        execute("CREATE TABLE IF NOT EXISTS credit_card(\n" +
                 "\tid VARCHAR(12) PRIMARY KEY,\n" +
                 "    active_status TINYINT,\n" +
                 "    total_amount DOUBLE,\n" +
@@ -118,7 +129,7 @@ public class DbInit {
                 "    FOREIGN KEY(id) REFERENCES card(id)\n" +
                 ");");
 
-        this.execute("ALTER TABLE account_with_card\n" +
+        execute("ALTER TABLE account_with_card\n" +
                 "ADD FOREIGN KEY(card_id) REFERENCES debit_card(id);");
 
     }

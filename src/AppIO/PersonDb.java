@@ -1,17 +1,18 @@
 package AppIO;
 
-import AppManager.Account;
-import AppManager.Person;
-import AppManager.Employee;
-import AppManager.Client;
+import AppManager.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class PersonDb {
 
-    private void add(Person toAdd){
+    private void add(Person toAdd) throws SQLException {
 
         try(Connection db = DbConfig.dbConnection()){
 
@@ -28,12 +29,9 @@ public class PersonDb {
 
             preparedStatement.execute();
         }
-        catch(SQLException err){
-            throw new RuntimeException(err.getMessage());
-        }
     }
 
-    public void add(Employee toAdd){
+    public void add(Employee toAdd) throws SQLException {
 
         this.add((Person) toAdd);
 
@@ -50,12 +48,10 @@ public class PersonDb {
 
             preparedStatement.execute();
         }
-        catch(SQLException err){
-            throw new RuntimeException(err.getMessage());
-        }
+
     }
 
-    /*public void add(Client toAdd){
+    public void add(Client toAdd) throws SQLException {
 
         this.add((Person) toAdd);
 
@@ -69,11 +65,53 @@ public class PersonDb {
 
             preparedStatement.execute();
 
-            // TODO: adaugare si conturi si carduri
+            AccountDb accountDb = new AccountDb();
+
+            Iterator accIter = toAdd.getAllAccounts();
+            while(accIter.hasNext()){
+
+                Map.Entry entry = (Map.Entry) accIter.next();
+                Account acc = (Account) entry.getValue();
+
+                if(acc instanceof DepotAccount)
+                    accountDb.add((DepotAccount) acc);
+
+                else if(acc instanceof SavingsAccount)
+                    accountDb.add((SavingsAccount) acc);
+
+                else if(acc instanceof BasicAccount)
+                    accountDb.add((BasicAccount) acc);
+
+                else if(acc instanceof CurrentAccount)
+                    accountDb.add((CurrentAccount) acc);
+            }
+
+            CardDb cardDb = new CardDb();
+
+            Iterator cardIter = toAdd.getAllCards();
+            while(cardIter.hasNext()){
+
+                Map.Entry entry = (Map.Entry) cardIter.next();
+                Card acc = (Card) entry.getValue();
+
+                if(acc instanceof CreditCard)
+                    cardDb.add((CreditCard) acc);
+
+                else if(acc instanceof DebitCard)
+                    cardDb.add((DebitCard) acc);
+            }
+
+            accIter = toAdd.getAllAccounts();
+            while(accIter.hasNext()){
+
+                Map.Entry entry = (Map.Entry) accIter.next();
+                Account acc = (Account) entry.getValue();
+                System.out.println("here " + acc.getName());
+                if(acc instanceof AccountWithCard)
+                    accountDb.linkWithCard((AccountWithCard) acc);
+            }
 
         }
-        catch(SQLException err){
-            throw new RuntimeException(err.getMessage());
-        }
-    }*/
+
+    }
 }

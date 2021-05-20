@@ -127,6 +127,18 @@ public class CurrentAccount extends AccountWithCard{
         return serialization.toString();
     }
 
+    public double getTransactionFee(){
+        return this.transactionFee;
+    }
+
+    public double getExtractFee(){
+        return this.extractFee;
+    }
+
+    public double getAddFee(){
+        return this.addFee;
+    }
+
     @Override
     public boolean equals(Object o) {
 

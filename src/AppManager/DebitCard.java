@@ -93,6 +93,14 @@ public class DebitCard extends Card{
         return associatedAccount.getName();
     }
 
+    public AccountWithCard getAccount(){
+
+        if(associatedAccount == null)
+            throw new NullPointerException("no associated account");
+
+        return associatedAccount;
+    }
+
     public String getSerialization(){
 
         StringBuilder serialization = new StringBuilder(super.getSerialization());

@@ -9,29 +9,27 @@ import java.sql.SQLException;
 
 public class AccountDb {
 
-    private void add(Account toAdd){
+    private void add(Account toAdd) throws SQLException {
 
         try(Connection db = DbConfig.dbConnection()){
 
-            String toExecute = "INSERT INTO account (id, owner_id, name, emp_assistant_id, creationdate, balance, flags) VALUES(?, ?, ?, ?, ?, ?, ?)";
+            String toExecute = "INSERT INTO account (id, owner_id, name, emp_assistant_id, creation_date, balance, flags) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
             PreparedStatement preparedStatement = db.prepareStatement(toExecute);
             preparedStatement.setString(1, toAdd.getAccountId());
             preparedStatement.setString(2, toAdd.getOwner().getId());
-            preparedStatement.setString(2, toAdd.getOwner().getName());
-            preparedStatement.setString(3, toAdd.getContractAssistant().getId());
-            preparedStatement.setDate(4, toAdd.getCreationDate());
-            preparedStatement.setDouble(5, toAdd.getBalance());
-            preparedStatement.setInt(6, toAdd.getFlags());
+            preparedStatement.setString(3, toAdd.getName());
+            preparedStatement.setString(4, toAdd.getContractAssistant().getId());
+            preparedStatement.setDate(5, toAdd.getCreationDate());
+            preparedStatement.setDouble(6, toAdd.getBalance());
+            preparedStatement.setInt(7, toAdd.getFlags());
 
             preparedStatement.execute();
         }
-        catch(SQLException err){
-            throw new RuntimeException(err.getMessage());
-        }
+
     }
 
-    public void add(DepotAccount toAdd){
+    public void add(DepotAccount toAdd) throws SQLException {
 
         this.add((Account) toAdd);
 
@@ -42,34 +40,101 @@ public class AccountDb {
             PreparedStatement preparedStatement = db.prepareStatement(toExecute);
             preparedStatement.setString(1, toAdd.getAccountId());
             preparedStatement.setInt(2, toAdd.getTerm());
-            preparedStatement.setDate(2, toAdd.getLastUpdatedTerm());
+            preparedStatement.setDate(3, toAdd.getLastUpdatedTerm());
 
             preparedStatement.execute();
         }
-        catch(SQLException err){
-            throw new RuntimeException(err.getMessage());
-        }
-
     }
 
-    public void add(SavingsAccount toAdd){
+    public void add(SavingsAccount toAdd) throws SQLException {
 
         this.add((Account) toAdd);
 
         try(Connection db = DbConfig.dbConnection()){
 
-            String toExecute = "INSERT INTO depot_account (id, interest_rate, last_updated) VALUES(?, ?, ?)";
+            String toExecute = "INSERT INTO savings_account (id, interest_rate, last_updated) VALUES(?, ?, ?)";
 
             PreparedStatement preparedStatement = db.prepareStatement(toExecute);
             preparedStatement.setString(1, toAdd.getAccountId());
             preparedStatement.setDouble(2, toAdd.getInterestRate());
-            preparedStatement.setDate(2, toAdd.getLastUpdated());
+            preparedStatement.setDate(3, toAdd.getLastUpdated());
 
             preparedStatement.execute();
         }
-        catch(SQLException err){
-            throw new RuntimeException(err.getMessage());
-        }
 
+    }
+
+    public void linkWithCard(AccountWithCard toUpdate) throws SQLException {
+
+        System.out.println("here2");
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "UPDATE account_with_card " +
+                    "SET card_id = ?" +
+                    "WHERE id = ? ";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            DebitCard associatedCard = toUpdate.getAssociatedCard();
+            preparedStatement.setString(1, associatedCard == null ? null : associatedCard.getCardId());
+            preparedStatement.setString(2, toUpdate.getAccountId());
+        }
+    }
+
+    private void add(AccountWithCard toAdd) throws SQLException {
+
+        this.add((Account) toAdd);
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "INSERT INTO account_with_card(id) VALUES(?)";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+            preparedStatement.setString(1, toAdd.getAccountId());
+
+            preparedStatement.execute();
+
+            try{
+                linkWithCard(toAdd);
+            }
+            catch(SQLException ignored){ }
+
+        }
+    }
+
+    public void add(BasicAccount toAdd) throws SQLException {
+
+        this.add((AccountWithCard) toAdd);
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "INSERT INTO basic_account(id) VALUES(?)";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, toAdd.getAccountId());
+
+            preparedStatement.execute();
+        }
+    }
+
+    public void add(CurrentAccount toAdd) throws SQLException {
+
+        this.add((AccountWithCard) toAdd);
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "INSERT INTO current_account(id, transfer_fee, extract_fee, add_fee) VALUES(?, ?, ?, ?)";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, toAdd.getAccountId());
+            preparedStatement.setDouble(2, toAdd.getTransactionFee());
+            preparedStatement.setDouble(3, toAdd.getExtractFee());
+            preparedStatement.setDouble(4, toAdd.getAddFee());
+
+            preparedStatement.execute();
+        }
     }
 }

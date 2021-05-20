@@ -1,94 +1,157 @@
 package AppManager;
 
-class IdGenerator {
+import AppIO.Logger;
+import AppIO.UtilsDb;
+
+import java.sql.SQLException;
+
+public class IdGenerator {
 
     public static String BASIC_PREFIX;
-    protected static int basicCounter;
-
     public static String CURRENT_PREFIX;
-    protected static int currentCounter;
-
     public static String SAVINGS_PREFIX;
-    protected static int savingsCounter;
-
     public static String DEPOT_PREFIX;
-    protected static int depotCounter;
-
     public static String CREDIT_PREFIX;
-    protected static int creditCounter;
-
     public static String DEBIT_PREFIX;
-    protected static int debitCounter;
-
-    protected static long personCounter;
+    
+    private long personCounter;
+    private long basicCounter;
+    private long currentCounter;
+    private long savingsCounter;
+    private long depotCounter;
+    private long creditCounter;
+    private long debitCounter;
 
     static{
+
         BASIC_PREFIX = "ba";
-        basicCounter = 19382875;
-
         CURRENT_PREFIX = "cr";
-        currentCounter = 23829424;
-
         SAVINGS_PREFIX = "sv";
-        savingsCounter = 78394728;
-
         DEPOT_PREFIX = "dp";
-        depotCounter = 42749831;
-
         CREDIT_PREFIX = "cr";
-        creditCounter = 62736288;
-
         DEBIT_PREFIX = "db";
-        debitCounter = 82739103;
 
-        personCounter = 192837492019L;
+        instance = null;
     }
 
-    public static String getAccountId(String type){
+    private static IdGenerator instance;
 
-        switch(type){
+    public static IdGenerator getIdGenerator(){
 
-            case "BASIC":
+        if(instance == null)
+            instance = new IdGenerator();
+
+        return instance;
+    }
+    
+    private IdGenerator(){
+
+        UtilsDb db = new UtilsDb();
+
+        try{
+
+            long[] counters = db.getCounters("main");
+
+            personCounter = counters[0];
+            basicCounter = counters[1];
+            currentCounter = counters[2];
+            savingsCounter = counters[3];
+            depotCounter = counters[4];
+            creditCounter = counters[5];
+            debitCounter = counters[6];
+        }
+        catch (Exception err){
+            throw new RuntimeException("Fatal error (could not load id counters): " + err.getMessage());
+        }
+    }
+
+    public String getAccountId(String type){
+
+        String toReturn;
+
+        switch (type) {
+            case "BASIC" -> {
                 basicCounter += 1;
-                return BASIC_PREFIX + basicCounter;
-
-            case "CURRENT":
+                toReturn = BASIC_PREFIX + basicCounter;
+            }
+            case "CURRENT" -> {
                 currentCounter += 1;
-                return CURRENT_PREFIX + currentCounter;
-
-            case "SAVINGS":
+                toReturn = CURRENT_PREFIX + currentCounter;
+            }
+            case "SAVINGS" -> {
                 savingsCounter += 1;
-                return SAVINGS_PREFIX + savingsCounter;
-
-            case "DEPOT":
+                toReturn = SAVINGS_PREFIX + savingsCounter;
+            }
+            case "DEPOT" -> {
                 depotCounter += 1;
-                return DEPOT_PREFIX + depotCounter;
-
-            default:
-                return ""; /// EXCEPTIE
+                toReturn = DEPOT_PREFIX + depotCounter;
+            }
+            default -> throw new RuntimeException("Invalid account type");
         }
+
+        try{
+
+            UtilsDb db = new UtilsDb();
+            db.saveCounters("main", this);
+        }
+        catch (SQLException err){
+
+            Logger log = Logger.getLogger();
+            log.logMessage("ERROR: counter ids could not be saved in database: " + err.getMessage());
+        }
+
+        return toReturn;
     }
 
-    public static String getCardId(String type){
+    public String getCardId(String type){
 
-        switch(type){
+        String toReturn;
 
-            case "DEBIT":
+        switch (type) {
+            case "DEBIT" -> {
                 debitCounter += 1;
-                return DEBIT_PREFIX + debitCounter;
-
-            case "CREDIT":
+                toReturn = DEBIT_PREFIX + debitCounter;
+            }
+            case "CREDIT" -> {
                 creditCounter += 1;
-                return CREDIT_PREFIX + creditCounter;
-
-            default:
-                return ""; // EXCEPTIE
+                toReturn = CREDIT_PREFIX + creditCounter;
+            }
+            default -> throw new RuntimeException("Invalid card type");
         }
+
+        try{
+
+            UtilsDb db = new UtilsDb();
+            db.saveCounters("main", this);
+        }
+        catch (SQLException err){
+
+            Logger log = Logger.getLogger();
+            log.logMessage("ERROR: counter ids could not be saved in database: " + err.getMessage());
+        }
+
+        return toReturn;
     }
 
-    public static String getPersonId(){
+    public String getPersonId(){
 
         personCounter += 1;
-        return "" + personCounter;
+
+        try{
+
+            UtilsDb db = new UtilsDb();
+            db.saveCounters("main", this);
+        }
+        catch (SQLException err){
+
+            Logger log = Logger.getLogger();
+            log.logMessage("ERROR: counter ids could not be saved in database: " + err.getMessage());
+        }
+
+        return Long.toString(personCounter);
+    }
+
+    public long[] previewIds(){
+        return new long[]{personCounter, basicCounter, currentCounter, savingsCounter, depotCounter, creditCounter, debitCounter};
     }
 }

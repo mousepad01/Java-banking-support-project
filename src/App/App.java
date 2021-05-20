@@ -4,7 +4,9 @@ import AppIO.*;
 import AppManager.*;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -24,29 +26,33 @@ public class App {
 
     public static void main(String[] args) {
 
-        new DbInit();
-
-        // TODO: manage chei duplicate in bd
+        DbInit.init();
 
         Client client;
         client = new Client("Aa", "Bb", "2000-12-29");
 
         Employee emp;
-        emp = new Employee("Aa", "Bb", "2001-12-29", "str 1", "a@y",
+        emp = new Employee("Ff", "Bgb", "2001-11-27", "str 1", "a@y",
                 "0713444555", "1999-10-09", "INFORMATICIAN",
-                "REMOTE", "id01", 4000);
+                "REMOTE", 4000);
 
         PersonDb db = new PersonDb();
 
-        db.add(emp);
+        try{
+            db.add(emp);
+        }
+        catch(SQLException err){
+            System.out.println(err.getMessage());
+        }
 
-        /*CurrentAccount cont = client.createCurrentAccount("cont curent", emp, "cont1");
-        //CurrentAccount cont = (CurrentAccount) client.getAccount("cont curent");
+        DepotAccount depotAccount = client.createDepotAccount("cont de depozit", emp, "ONE MONTH", 1300);
+        SavingsAccount savingsAccount = client.createSavingsAccount("cont de economii", emp);
+
+        CurrentAccount cont = client.createCurrentAccount("cont curent", emp);
 
         cont.add(2700);
 
-        DebitCard cardDebit = client.createDebitCard("cont curent", "card de debit", emp, "cardD");
-        //DebitCard cardDebit = (DebitCard) client.getCard("card de debit");
+        DebitCard cardDebit = client.createDebitCard("cont curent", "card de debit", emp);
 
         System.out.println(cardDebit.getBalance());
         cardDebit.add(1000);
@@ -54,13 +60,20 @@ public class App {
 
         System.out.println(cont.getBalance());
 
-        CreditCard cr = client.createCreditCard("card de credit", 1200, emp, "cr1");
-        CreditCard cr2 = client.createCreditCard("credit pt ceva", 3500, emp, "cr2");
+        CreditCard cr = client.createCreditCard("card de credit", 1200, emp);
+        CreditCard cr2 = client.createCreditCard("credit pt ceva", 3500, emp);
 
-        AccountWithCard cont2 = client.createBasicAccount("cont de baza", emp, "ac2");
-        //AccountWithCard cont2 = (AccountWithCard) client.getAccount("cont de baza");
+        AccountWithCard cont2 = client.createBasicAccount("cont de baza", emp);
 
-        System.out.println(client.getClientFunds());
+        try {
+            System.out.println("add client");
+            db.add(client);
+        }
+        catch(SQLException err){
+            System.out.println(err.getMessage());
+        }
+
+        /*System.out.println(client.getClientFunds());
         System.out.println(client.getCreditDebt());
 
         FileIOManager fileIOManager = FileIOManager.getInstance();
@@ -74,6 +87,7 @@ public class App {
         System.out.println(cardDebit); // card de debit - cont curent
         System.out.println(cr); // card de credit
         System.out.println(cr2); // credit pt ceva
+
 
         try{
 
