@@ -66,19 +66,19 @@ public class AccountDb {
 
     public void linkWithCard(AccountWithCard toUpdate) throws SQLException {
 
-        System.out.println("here2");
-
         try(Connection db = DbConfig.dbConnection()){
 
-            String toExecute = "UPDATE account_with_card " +
-                    "SET card_id = ?" +
-                    "WHERE id = ? ";
+            String toExecute = "UPDATE account_with_card\n" +
+                                "SET card_id = ? \n" +
+                                "WHERE id = ? \n";
 
             PreparedStatement preparedStatement = db.prepareStatement(toExecute);
 
             DebitCard associatedCard = toUpdate.getAssociatedCard();
             preparedStatement.setString(1, associatedCard == null ? null : associatedCard.getCardId());
             preparedStatement.setString(2, toUpdate.getAccountId());
+
+            preparedStatement.execute();
         }
     }
 

@@ -63,6 +63,8 @@ public class App {
         CreditCard cr = client.createCreditCard("card de credit", 1200, emp);
         CreditCard cr2 = client.createCreditCard("credit pt ceva", 3500, emp);
 
+        int pin = cr.initPin();
+
         AccountWithCard cont2 = client.createBasicAccount("cont de baza", emp);
 
         try {

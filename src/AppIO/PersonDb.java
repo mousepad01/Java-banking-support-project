@@ -106,7 +106,7 @@ public class PersonDb {
 
                 Map.Entry entry = (Map.Entry) accIter.next();
                 Account acc = (Account) entry.getValue();
-                System.out.println("here " + acc.getName());
+
                 if(acc instanceof AccountWithCard)
                     accountDb.linkWithCard((AccountWithCard) acc);
             }
