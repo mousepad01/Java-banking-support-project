@@ -29,21 +29,12 @@ public class App {
         DbInit.init();
 
         Client client;
-        client = new Client("Aa", "Bb", "2000-12-29");
+        client = Client.newClient("Aa", "Bb", "2000-12-29");
 
         Employee emp;
-        emp = new Employee("Ff", "Bgb", "2001-11-27", "str 1", "a@y",
+        emp = Employee.newEmployee("Ff", "Bgb", "2001-11-27", "str 1", "a@y",
                 "0713444555", "1999-10-09", "INFORMATICIAN",
                 "REMOTE", 4000);
-
-        PersonDb db = new PersonDb();
-
-        try{
-            db.add(emp);
-        }
-        catch(SQLException err){
-            System.out.println(err.getMessage());
-        }
 
         DepotAccount depotAccount = client.createDepotAccount("cont de depozit", emp, "ONE MONTH", 1300);
         SavingsAccount savingsAccount = client.createSavingsAccount("cont de economii", emp);
@@ -66,14 +57,6 @@ public class App {
         int pin = cr.initPin();
 
         AccountWithCard cont2 = client.createBasicAccount("cont de baza", emp);
-
-        try {
-            System.out.println("add client");
-            db.add(client);
-        }
-        catch(SQLException err){
-            System.out.println(err.getMessage());
-        }
 
         /*System.out.println(client.getClientFunds());
         System.out.println(client.getCreditDebt());

@@ -48,7 +48,6 @@ public class PersonDb {
 
             preparedStatement.execute();
         }
-
     }
 
     public void add(Client toAdd) throws SQLException {
@@ -114,4 +113,67 @@ public class PersonDb {
         }
 
     }
+
+    /*private void deletePerson(String personIdToDelete) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "DELETE FROM person (id) WHERE id = ?";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+            preparedStatement.setString(1, personIdToDelete);
+
+            preparedStatement.execute();
+        }
+    }*/
+
+    public void update(Person toUpdate) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "UPDATE person \n" +
+                                "SET address = ?, email = ?, phone = ?" +
+                                "WHERE id = ? \n";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, toUpdate.getAddress());
+            preparedStatement.setString(2, toUpdate.getEmail());
+            preparedStatement.setString(3, toUpdate.getPhoneNumber());
+            preparedStatement.setString(4, toUpdate.getId());
+
+            preparedStatement.execute();
+        }
+    }
+
+    public void update(Employee toUpdate) throws SQLException {
+
+        this.update((Person) toUpdate);
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "UPDATE employee \n" +
+                                "SET job = ?, workplace = ?, salary = ?" +
+                                "WHERE id = ? \n";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, toUpdate.getJob());
+            preparedStatement.setString(2, toUpdate.getWorkplace());
+            preparedStatement.setInt(3, toUpdate.getSalary());
+            preparedStatement.setString(4, toUpdate.getId());
+
+            preparedStatement.execute();
+        }
+    }
+
+    public void update(Client toUpdate) throws SQLException {
+
+        this.update((Person) toUpdate);
+
+        // aceasta metoda updateaza doar datele personale ale clientului,
+        // stergerea sau modificarea conturilor asociate are loc separat
+    }
 }
+
+

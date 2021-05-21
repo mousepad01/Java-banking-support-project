@@ -95,7 +95,7 @@ public class DbInit {
 
         execute("CREATE TABLE IF NOT EXISTS current_account(\n" +
                 "\tid VARCHAR(12) PRIMARY KEY,\n" +
-                "    transfer_fee DOUBLE,\n" +
+                "    transaction_fee DOUBLE,\n" +
                 "    extract_fee DOUBLE,\n" +
                 "    add_fee DOUBLE,\n" +
                 "    FOREIGN KEY(id) REFERENCES account_with_card(id)\n" +

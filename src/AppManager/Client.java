@@ -1,6 +1,10 @@
 package AppManager;
 
+import AppIO.Logger;
+import AppIO.PersonDb;
+
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,6 +19,22 @@ public class Client extends Person {
 
     private HashMap<String, Card> cards;
     private HashMap<String, Account> accounts;
+
+    public static Client newClient(String name, String surname, String birthDateStr){
+
+        Client toReturn = new Client(name, surname, birthDateStr);
+
+        try{
+            (new PersonDb()).add(toReturn);
+        }
+        catch(SQLException err){
+
+            Logger log = Logger.getLogger();
+            log.logMessage("Erro while trying to save new Client in database: " + err.getMessage());
+        }
+
+        return toReturn;
+    }
 
     public Client(String name, String surname, String birthDateStr, String address, String email, String phoneNumber,
                   String registrationDateStr, String id, ArrayList<String> accountsIds, ArrayList<String> cardsIds) {
@@ -56,14 +76,6 @@ public class Client extends Person {
 
     public Iterator<HashMap.Entry<String, Account>> getAllAccounts(){
         return accounts.entrySet().iterator();
-    }
-
-    public ArrayList<String> getAccountsIds(){
-        return this.accountsIds;
-    }
-
-    public ArrayList<String> getCardsIds(){
-        return this.cardsIds;
     }
 
     public Card getCard(String toSearch){

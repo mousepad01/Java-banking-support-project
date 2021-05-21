@@ -137,4 +137,107 @@ public class AccountDb {
             preparedStatement.execute();
         }
     }
+
+    private void update(Account toUpdate) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "UPDATE account \n" +
+                                "SET balance = ?, flags = ?" +
+                                "WHERE id = ? \n";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setDouble(1, toUpdate.getBalance());
+            preparedStatement.setInt(2, toUpdate.getFlags());
+            preparedStatement.setString(3, toUpdate.getAccountId());
+
+            preparedStatement.execute();
+        }
+    }
+
+    public void update(DepotAccount toUpdate) throws SQLException {
+
+        this.update((Account) toUpdate);
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "UPDATE depot_account \n" +
+                                "SET last_updated_term = ?" +
+                                "WHERE id = ? \n";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setDate(1, toUpdate.getLastUpdatedTerm());
+            preparedStatement.setString(2, toUpdate.getAccountId());
+
+            preparedStatement.execute();
+        }
+    }
+
+    public void update(SavingsAccount toUpdate) throws SQLException {
+
+        this.update((Account) toUpdate);
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "UPDATE savings_account \n" +
+                                "SET interest_rate = ?, last_updated = ?" +
+                                "WHERE id = ? \n";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setDouble(1, toUpdate.getInterestRate());
+            preparedStatement.setDate(2, toUpdate.getLastUpdated());
+            preparedStatement.setString(3, toUpdate.getAccountId());
+
+            preparedStatement.execute();
+        }
+    }
+
+    public void update(AccountWithCard toUpdate) throws SQLException {
+
+        this.update((Account) toUpdate);
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "UPDATE account_with_card \n" +
+                                "SET card_id = ?" +
+                                "WHERE id = ? \n";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            DebitCard associatedCard = toUpdate.getAssociatedCard();
+            preparedStatement.setString(1, associatedCard == null ? null : associatedCard.getCardId());
+            preparedStatement.setString(2, toUpdate.getAccountId());
+
+            preparedStatement.execute();
+        }
+    }
+
+    public void update(BasicAccount toUpdate) throws SQLException {
+
+        this.update((AccountWithCard) toUpdate);
+    }
+
+    public void update(CurrentAccount toUpdate) throws SQLException {
+
+        this.update((AccountWithCard) toUpdate);
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "UPDATE current_account \n" +
+                                "SET transaction_fee = ?, extract_fee = ?, add_fee = ?" +
+                                "WHERE id = ? \n";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setDouble(1, toUpdate.getTransactionFee());
+            preparedStatement.setDouble(2, toUpdate.getExtractFee());
+            preparedStatement.setDouble(3, toUpdate.getAddFee());
+            preparedStatement.setString(4, toUpdate.getAccountId());
+
+            preparedStatement.execute();
+        }
+    }
 }

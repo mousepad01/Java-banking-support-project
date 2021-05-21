@@ -1,7 +1,10 @@
 package AppManager;
 
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.Objects;
+
+import AppIO.*;
 
 public class Employee extends Person {
 
@@ -10,6 +13,24 @@ public class Employee extends Person {
     private String job;
     private String workplace;
     private int salary;
+
+    public static Employee newEmployee(String name, String surname, String birthDateStr, String address, String email,
+                                       String phoneNumber, String hireDateStr, String job, String workplace, int salary){
+
+        Employee toReturn = new Employee(name, surname, birthDateStr, address, email,
+                phoneNumber, hireDateStr, job, workplace, salary);
+
+        try{
+            (new PersonDb()).add(toReturn);
+        }
+        catch(SQLException err){
+
+            Logger log = Logger.getLogger();
+            log.logMessage("Erro while trying to save new Employee in database: " + err.getMessage());
+        }
+
+        return toReturn;
+    }
 
     public Employee(String name, String surname, String birthDateStr, String address, String email,
                     String phoneNumber, String hireDateStr, String job, String workplace, String id, int salary) {
@@ -27,6 +48,7 @@ public class Employee extends Person {
 
     public Employee(String name, String surname, String birthDateStr, String address, String email,
                     String phoneNumber, String hireDateStr, String job, String workplace, int salary) {
+
         super(name, surname, birthDateStr, address, email, phoneNumber);
 
         if(!Validator.pastDateOk(hireDateStr) || !hireOk(job, salary, workplace))
