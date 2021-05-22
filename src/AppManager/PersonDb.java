@@ -1,8 +1,7 @@
 package AppManager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -156,6 +155,146 @@ public class PersonDb {
 
         // aceasta metoda updateaza doar datele personale ale clientului,
         // stergerea sau modificarea conturilor asociate are loc separat
+    }
+
+    public ArrayList<Employee> loadAllEmployees() throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()) {
+
+            String toExecute = "SELECT p.*, e.hire_date, e.job, e.workplace, e.salary\n" +
+                                "FROM employee e, person p\n" +
+                                "WHERE e.id = p.id;";
+
+            Statement statement = db.createStatement();
+            ResultSet resultEmps = statement.executeQuery(toExecute);
+
+            ArrayList<Employee> toReturn = new ArrayList<>();
+
+            while(resultEmps.next()){
+
+                String personId = resultEmps.getString("id");
+                String personName = resultEmps.getString("name");
+                String personSurname = resultEmps.getString("surname");
+                Date personBirthdate = resultEmps.getDate("birthdate");
+                String personAddress = resultEmps.getString("address");
+                String personEmail = resultEmps.getString("email");
+                String personPhone = resultEmps.getString("phone");
+
+                Date employeeHireDate = resultEmps.getDate("hire_date");
+                String employeeJob = resultEmps.getString("job");
+                String employeeWorkplace = resultEmps.getString("workplace");
+                int employeeSalary = resultEmps.getInt("salary");
+
+                toReturn.add(new Employee(personName, personSurname, personBirthdate.toString(), personAddress,
+                                            personEmail, personPhone, employeeHireDate.toString(), employeeJob,
+                                            employeeWorkplace, personId, employeeSalary));
+            }
+
+            return toReturn;
+        }
+    }
+
+    // incarca fara conturi si carduri asociate
+    public ArrayList<Client> loadAllClients() throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()) {
+
+            String toExecute = "SELECT p.*, c.registration_date\n" +
+                                "FROM person p, client c\n" +
+                                "WHERE p.id = c.id;";
+
+            Statement statement = db.createStatement();
+            ResultSet resultClients = statement.executeQuery(toExecute);
+
+            ArrayList<Client> toReturn = new ArrayList<>();
+
+            while(resultClients.next()){
+
+                String personId = resultClients.getString("id");
+                String personName = resultClients.getString("name");
+                String personSurname = resultClients.getString("surname");
+                Date personBirthdate = resultClients.getDate("birthdate");
+                String personAddress = resultClients.getString("address");
+                String personEmail = resultClients.getString("email");
+                String personPhone = resultClients.getString("phone");
+
+                Date clientRegistrationDate = resultClients.getDate("registration_date");
+
+                toReturn.add(new Client(personName, personSurname, personBirthdate.toString(), personAddress, personEmail,
+                                        personPhone, clientRegistrationDate.toString(), personId, null, null));
+            }
+
+            return toReturn;
+        }
+    }
+
+    public Employee loadEmployee(String id) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()) {
+
+            String toExecute = "SELECT p.*, e.hire_date, e.job, e.workplace, e.salary\n" +
+                                "FROM employee e, person p\n" +
+                                "WHERE e.id = ?;";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+            preparedStatement.setString(1, id);
+
+            ResultSet resultEmp = preparedStatement.executeQuery();
+
+            if(resultEmp.next()){
+
+                String personId = resultEmp.getString("id");
+                String personName = resultEmp.getString("name");
+                String personSurname = resultEmp.getString("surname");
+                Date personBirthdate = resultEmp.getDate("birthdate");
+                String personAddress = resultEmp.getString("address");
+                String personEmail = resultEmp.getString("email");
+                String personPhone = resultEmp.getString("phone");
+
+                Date employeeHireDate = resultEmp.getDate("hire_date");
+                String employeeJob = resultEmp.getString("job");
+                String employeeWorkplace = resultEmp.getString("workplace");
+                int employeeSalary = resultEmp.getInt("salary");
+
+                return new Employee(personName, personSurname, personBirthdate.toString(), personAddress,
+                                    personEmail, personPhone, employeeHireDate.toString(), employeeJob,
+                                    employeeWorkplace, personId, employeeSalary);
+            }
+
+            return null;
+        }
+    }
+
+    // incarca fara conturi si carduri asociate
+    public Client loadClient(String id) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()) {
+
+            String toExecute = "SELECT p.*, c.registration_date\n" +
+                                "FROM person p, client c\n" +
+                                "WHERE p.id = ?;";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+            ResultSet resultClient = preparedStatement.executeQuery(toExecute);
+
+            if(resultClient.next()){
+
+                String personId = resultClient.getString("id");
+                String personName = resultClient.getString("name");
+                String personSurname = resultClient.getString("surname");
+                Date personBirthdate = resultClient.getDate("birthdate");
+                String personAddress = resultClient.getString("address");
+                String personEmail = resultClient.getString("email");
+                String personPhone = resultClient.getString("phone");
+
+                Date clientRegistrationDate = resultClient.getDate("registration_date");
+
+                return new Client(personName, personSurname, personBirthdate.toString(), personAddress, personEmail,
+                                    personPhone, clientRegistrationDate.toString(), personId, null, null);
+            }
+
+            return null;
+        }
     }
 }
 

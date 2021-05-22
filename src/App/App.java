@@ -29,8 +29,8 @@ public class App {
             // si in cazul in care detecteaza o schimbare, actualizeaza baza de date
             // verificarile se vor face o data la timerSeconds secunde
 
-            dbManagerThread = new Thread(DbManager.CreateDbManager(5));
-            dbManagerThread.start();
+            //dbManagerThread = new Thread(DbManager.CreateDbManager(5));
+            //dbManagerThread.start();
         }
     }
 

@@ -1,6 +1,10 @@
 package AppManager;
 
+import com.mysql.cj.log.Log;
+
+import java.sql.SQLException;
 import java.time.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 // singleton dar care nu returneaza decat o singura data referinta
@@ -32,7 +36,7 @@ public class DbManager implements Runnable{
     private int timerSeconds;
 
     private HashMap<String, Integer> changedPersons;
-    private HashMap<String, Integer> changedccounts;
+    private HashMap<String, Integer> changedAccounts;
     private HashMap<String, Integer> changedCards;
 
     // changed persons code:
@@ -74,6 +78,25 @@ public class DbManager implements Runnable{
 
     public void run(){
 
+        changedPersons = new HashMap<>();
+        changedAccounts = new HashMap<>();
+        changedCards = new HashMap<>();
 
+        PersonDb personDb = new PersonDb();
+        AccountDb accountDb = new AccountDb();
+        CardDb cardDb = new CardDb();
+
+        try {
+
+            ArrayList<Employee> loadedEmployees = personDb.loadAllEmployees();
+            ArrayList<Client> loadedClients = personDb.loadAllClients();
+
+
+        } catch (SQLException err) {
+
+            Logger log = Logger.getLogger();
+            log.logMessage("Error while trying to load initial info from database: " + err.getMessage());
+            return;
+        }
     }
 }

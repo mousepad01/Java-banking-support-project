@@ -1,8 +1,6 @@
 package AppManager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 
 public class AccountDb {
@@ -341,5 +339,182 @@ public class AccountDb {
         }
 
         this.delete((AccountWithCard) toDelete);
+    }
+
+    public DepotAccount loadDepotAccount(String id, Client accountOwner, Employee empAssistant) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "SELECT a.*, d.term, d.last_updated_term\n" +
+                                "FROM account a, depot_account d\n" +
+                                "WHERE a.id = d.id\n" +
+                                "AND d.id = ?;";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, id);
+
+            ResultSet resultAccount = preparedStatement.executeQuery();
+
+            if(resultAccount.next()){
+
+                String accountId = resultAccount.getString("id");
+
+                String accountOwnerId = resultAccount.getString("owner_id");
+                if(!accountOwnerId.equals(accountOwner.getId()))
+                    throw new IllegalArgumentException("Real owner id does not match id of client given as parameter!");
+
+                String accountName = resultAccount.getString("name");
+
+                String empAssistantId = resultAccount.getString("emp_assistant_id");
+                if(!empAssistantId.equals(empAssistant.getId()))
+                    throw new IllegalArgumentException("Real employee assistant id does not match id of client given as parameter!");
+
+                Date accountCreationDate = resultAccount.getDate("creation_date");
+                double accountBalance = resultAccount.getDouble("balance");
+                byte accountFlags = resultAccount.getByte("flags");
+
+                int accountTerm = resultAccount.getInt("term");
+                Date accountLastUpdatedTerm = resultAccount.getDate("last_updated_term");
+
+                return new DepotAccount(accountId, accountOwner, accountName, empAssistant, accountCreationDate,
+                                        accountBalance, accountFlags, accountTerm, accountLastUpdatedTerm);
+            }
+
+            return null;
+        }
+    }
+
+    public SavingsAccount loadSavingsAccount(String id, Client accountOwner, Employee empAssistant) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "SELECT a.*, s.interest_rate, s.last_updated\n" +
+                                "FROM account a, savings_account s\n" +
+                                "WHERE a.id = s.id\n" +
+                                "AND s.id = ?;";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, id);
+
+            ResultSet resultAccount = preparedStatement.executeQuery();
+
+            if(resultAccount.next()){
+
+                String accountId = resultAccount.getString("id");
+
+                String accountOwnerId = resultAccount.getString("owner_id");
+                if(!accountOwnerId.equals(accountOwner.getId()))
+                    throw new IllegalArgumentException("Real owner id does not match id of client given as parameter!");
+
+                String accountName = resultAccount.getString("name");
+
+                String empAssistantId = resultAccount.getString("emp_assistant_id");
+                if(!empAssistantId.equals(empAssistant.getId()))
+                    throw new IllegalArgumentException("Real employee assistant id does not match id of client given as parameter!");
+
+                Date accountCreationDate = resultAccount.getDate("creation_date");
+                double accountBalance = resultAccount.getDouble("balance");
+                byte accountFlags = resultAccount.getByte("flags");
+
+                double accountInterestRate = resultAccount.getInt("interest_rate");
+                Date accountLastUpdated = resultAccount.getDate("last_updated");
+
+                return new SavingsAccount(accountId, accountOwner, accountName, empAssistant, accountCreationDate,
+                                            accountBalance, accountFlags, accountInterestRate, accountLastUpdated);
+            }
+
+            return null;
+        }
+    }
+
+    // nu incarca si eventualul card asociat
+    public BasicAccount loadBasicAccount(String id, Client accountOwner, Employee empAssistant) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "SELECT a.*\n" +
+                                "FROM account a, basic_account b\n" +
+                                "WHERE a.id = b.id\n" +
+                                "AND b.id = ?;";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, id);
+
+            ResultSet resultAccount = preparedStatement.executeQuery();
+
+            if(resultAccount.next()){
+
+                String accountId = resultAccount.getString("id");
+
+                String accountOwnerId = resultAccount.getString("owner_id");
+                if(!accountOwnerId.equals(accountOwner.getId()))
+                    throw new IllegalArgumentException("Real owner id does not match id of client given as parameter!");
+
+                String accountName = resultAccount.getString("name");
+
+                String empAssistantId = resultAccount.getString("emp_assistant_id");
+                if(!empAssistantId.equals(empAssistant.getId()))
+                    throw new IllegalArgumentException("Real employee assistant id does not match id of client given as parameter!");
+
+                Date accountCreationDate = resultAccount.getDate("creation_date");
+                double accountBalance = resultAccount.getDouble("balance");
+                byte accountFlags = resultAccount.getByte("flags");
+
+                return new BasicAccount(accountId, accountOwner, accountName, empAssistant, accountCreationDate,
+                                        accountBalance, accountFlags, null);
+            }
+
+            return null;
+        }
+    }
+
+    // nu incarca si eventualul card asociat
+    public CurrentAccount loadCurrentAccount(String id, Client accountOwner, Employee empAssistant) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "SELECT a.*, c.transaction_fee, c.extract_fee, c.add_fee\n" +
+                                "FROM account a, current_account c\n" +
+                                "WHERE a.id = c.id\n" +
+                                "AND c.id = ?;";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, id);
+
+            ResultSet resultAccount = preparedStatement.executeQuery();
+
+            if(resultAccount.next()){
+
+                String accountId = resultAccount.getString("id");
+
+                String accountOwnerId = resultAccount.getString("owner_id");
+                if(!accountOwnerId.equals(accountOwner.getId()))
+                    throw new IllegalArgumentException("Real owner id does not match id of client given as parameter!");
+
+                String accountName = resultAccount.getString("name");
+
+                String empAssistantId = resultAccount.getString("emp_assistant_id");
+                if(!empAssistantId.equals(empAssistant.getId()))
+                    throw new IllegalArgumentException("Real employee assistant id does not match id of client given as parameter!");
+
+                Date accountCreationDate = resultAccount.getDate("creation_date");
+                double accountBalance = resultAccount.getDouble("balance");
+                byte accountFlags = resultAccount.getByte("flags");
+
+                double accountTransactionFee = resultAccount.getDouble("transaction_fee");
+                double accountExtractFee = resultAccount.getDouble("extract_fee");
+                double accountAddFee = resultAccount.getDouble("add_fee");
+
+                return new CurrentAccount(accountId, accountOwner, accountName, empAssistant, accountCreationDate,
+                                            accountBalance, accountFlags, null, accountTransactionFee,
+                                            accountExtractFee, accountAddFee);
+            }
+
+            return null;
+        }
     }
 }
