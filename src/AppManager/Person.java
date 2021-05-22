@@ -16,7 +16,7 @@ public abstract class Person {
     protected String email;
     protected String phoneNumber;
 
-    public Person(String name, String surname, String birthDateStr, String address, String email, String phoneNumber, String id) {
+    protected Person(String name, String surname, String birthDateStr, String address, String email, String phoneNumber, String id) {
 
         if(!Validator.nameOk(name) || !Validator.nameOk(surname)
                 || !Validator.emailOk(email) || !Validator.phoneNumberOk(phoneNumber)

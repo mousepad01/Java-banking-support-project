@@ -6,7 +6,7 @@ import AppManager.*;
 
 public class App {
 
-    /// PENTRU DEBUG
+    // PENTRU DEBUG
     public static void dormi(long milisec){
 
         try {
@@ -16,9 +16,36 @@ public class App {
         }
     }
 
-    public static void main(String[] args) {
+    private static Thread dbManagerThread;
 
-        DbInit.init();
+    private static void initDb(){
+
+        if(!DbManager.isAlreadyCreated()) {
+
+            DbInit.init();
+
+            // voi avea un thread pe fundal care monitorizeaza schimbarile in memorie
+            // cu ajutorul unui tabel de dispersie public
+            // si in cazul in care detecteaza o schimbare, actualizeaza baza de date
+            // verificarile se vor face o data la timerSeconds secunde
+
+            dbManagerThread = new Thread(DbManager.CreateDbManager(5));
+            dbManagerThread.start();
+        }
+    }
+
+    private static void disconnectDb() throws InterruptedException {
+
+        if(DbManager.isAlreadyCreated()) {
+
+            DbManager.done = true;
+            dbManagerThread.join();
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+
+        initDb();
 
         Client client;
         client = Client.newClient("Aa", "Bb", "2000-12-29");
@@ -124,5 +151,7 @@ public class App {
 
         Logger log = Logger.getLogger();
         log.endLogging();*/
+
+        disconnectDb();
     }
 }

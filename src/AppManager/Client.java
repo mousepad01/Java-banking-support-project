@@ -33,7 +33,7 @@ public class Client extends Person {
         return toReturn;
     }
 
-    public Client(String name, String surname, String birthDateStr, String address, String email, String phoneNumber,
+    protected Client(String name, String surname, String birthDateStr, String address, String email, String phoneNumber,
                   String registrationDateStr, String id, ArrayList<String> accountsIds, ArrayList<String> cardsIds) {
 
         super(name, surname, birthDateStr, address, email, phoneNumber, id);

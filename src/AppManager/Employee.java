@@ -30,7 +30,7 @@ public class Employee extends Person {
         return toReturn;
     }
 
-    public Employee(String name, String surname, String birthDateStr, String address, String email,
+    protected Employee(String name, String surname, String birthDateStr, String address, String email,
                     String phoneNumber, String hireDateStr, String job, String workplace, String id, int salary) {
 
         super(name, surname, birthDateStr, address, email, phoneNumber, id);
