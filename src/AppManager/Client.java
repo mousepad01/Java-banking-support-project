@@ -1,8 +1,5 @@
 package AppManager;
 
-import AppIO.Logger;
-import AppIO.PersonDb;
-
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -291,7 +288,7 @@ public class Client extends Person {
         accounts.remove(name);
     }
 
-    public String getSerialization(){
+    protected String getSerialization(){
 
         StringBuilder serialization = new StringBuilder(super.getSerialization());
         serialization.append("CLIENT: ");

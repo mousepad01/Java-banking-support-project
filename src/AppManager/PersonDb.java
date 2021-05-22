@@ -1,12 +1,8 @@
-package AppIO;
-
-import AppManager.*;
+package AppManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -31,7 +27,7 @@ public class PersonDb {
         }
     }
 
-    public void add(Employee toAdd) throws SQLException {
+    protected void add(Employee toAdd) throws SQLException {
 
         this.add((Person) toAdd);
 
@@ -50,7 +46,7 @@ public class PersonDb {
         }
     }
 
-    public void add(Client toAdd) throws SQLException {
+    protected void add(Client toAdd) throws SQLException {
 
         this.add((Person) toAdd);
 
@@ -114,20 +110,7 @@ public class PersonDb {
 
     }
 
-    /*private void deletePerson(String personIdToDelete) throws SQLException {
-
-        try(Connection db = DbConfig.dbConnection()){
-
-            String toExecute = "DELETE FROM person (id) WHERE id = ?";
-
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
-            preparedStatement.setString(1, personIdToDelete);
-
-            preparedStatement.execute();
-        }
-    }*/
-
-    public void update(Person toUpdate) throws SQLException {
+    protected void update(Person toUpdate) throws SQLException {
 
         try(Connection db = DbConfig.dbConnection()){
 
@@ -146,7 +129,7 @@ public class PersonDb {
         }
     }
 
-    public void update(Employee toUpdate) throws SQLException {
+    protected void update(Employee toUpdate) throws SQLException {
 
         this.update((Person) toUpdate);
 
@@ -167,7 +150,7 @@ public class PersonDb {
         }
     }
 
-    public void update(Client toUpdate) throws SQLException {
+    protected void update(Client toUpdate) throws SQLException {
 
         this.update((Person) toUpdate);
 

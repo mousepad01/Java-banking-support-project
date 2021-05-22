@@ -4,8 +4,6 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Objects;
 
-import AppIO.*;
-
 public class Employee extends Person {
 
     private final Date hireDate;
@@ -88,7 +86,7 @@ public class Employee extends Person {
         this.salary = salary;
     }
 
-    public String getSerialization(){
+    protected String getSerialization(){
 
         StringBuilder serialization = new StringBuilder(super.getSerialization());
         serialization.append("EMPLOYEE: ");

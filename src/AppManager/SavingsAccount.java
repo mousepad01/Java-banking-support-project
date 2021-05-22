@@ -146,7 +146,7 @@ public class SavingsAccount extends Account{
         lastUpdated = new Date(currentTime);
     }
 
-    public String getSerialization(){
+    protected String getSerialization(){
 
         StringBuilder serialization = new StringBuilder(super.getSerialization());
 

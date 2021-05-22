@@ -183,7 +183,7 @@ public class DepotAccount extends Account{
             suspendInterest();
     }
 
-    public String getSerialization(){
+    protected String getSerialization(){
 
         StringBuilder serialization = new StringBuilder(super.getSerialization());
 

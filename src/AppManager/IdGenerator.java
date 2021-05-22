@@ -1,8 +1,5 @@
 package AppManager;
 
-import AppIO.Logger;
-import AppIO.UtilsDb;
-
 import java.sql.SQLException;
 
 public class IdGenerator {

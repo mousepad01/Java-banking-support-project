@@ -1,7 +1,5 @@
 package AppManager;
 
-import AppIO.Logger;
-
 import java.sql.Date;
 import java.util.Objects;
 
@@ -130,7 +128,7 @@ public abstract class Person {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getSerialization(){
+    protected String getSerialization(){
 
         StringBuilder serialization = new StringBuilder("PERSON: ");
 

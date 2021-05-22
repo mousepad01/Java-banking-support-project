@@ -1,7 +1,5 @@
 package AppManager;
 
-import AppIO.Logger;
-
 import java.sql.Date;
 import java.util.Objects;
 
@@ -79,7 +77,7 @@ public abstract class Account {
         return name;
     }
 
-    public Byte getFlags(){
+    protected Byte getFlags(){
         return flags;
     }
 
@@ -103,7 +101,7 @@ public abstract class Account {
         return contractAssistant;
     }
 
-    public String getSerialization(){
+    protected String getSerialization(){
 
         StringBuilder serialization = new StringBuilder("ACCOUNT: ");
 

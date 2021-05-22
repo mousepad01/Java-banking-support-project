@@ -1,7 +1,5 @@
 package AppManager;
 
-import AppIO.Logger;
-
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -70,7 +68,7 @@ public abstract class Card {
         return name;
     }
 
-    public boolean isPinInitialized(){
+    protected boolean isPinInitialized(){
         return pinIsInitialized;
     }
 
@@ -150,7 +148,11 @@ public abstract class Card {
         return true;
     }
 
-    public String getSerialization(){
+    protected byte[] getPinHash(){
+        return pinHash;
+    }
+
+    protected String getSerialization(){
 
         StringBuilder serialization = new StringBuilder("CARD: ");
 
@@ -164,10 +166,6 @@ public abstract class Card {
         serialization.append(emissionDate.toString()).append(";");
 
         return serialization.toString();
-    }
-
-    public byte[] getPinHash(){
-        return pinHash;
     }
 
     @Override

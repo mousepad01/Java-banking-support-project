@@ -88,7 +88,7 @@ public class BasicAccount extends AccountWithCard {
         return balance;
     }
 
-    public String getSerialization(){
+    protected String getSerialization(){
 
         String serialization = super.getSerialization();
 

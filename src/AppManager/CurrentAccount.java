@@ -115,7 +115,7 @@ public class CurrentAccount extends AccountWithCard{
         return this.balance;
     }
 
-    public String getSerialization(){
+    protected String getSerialization(){
 
         StringBuilder serialization = new StringBuilder(super.getSerialization());
 

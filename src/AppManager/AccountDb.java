@@ -1,6 +1,4 @@
-package AppIO;
-
-import AppManager.*;
+package AppManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,7 +27,7 @@ public class AccountDb {
 
     }
 
-    public void add(DepotAccount toAdd) throws SQLException {
+    protected void add(DepotAccount toAdd) throws SQLException {
 
         this.add((Account) toAdd);
 
@@ -46,7 +44,7 @@ public class AccountDb {
         }
     }
 
-    public void add(SavingsAccount toAdd) throws SQLException {
+    protected void add(SavingsAccount toAdd) throws SQLException {
 
         this.add((Account) toAdd);
 
@@ -64,7 +62,7 @@ public class AccountDb {
 
     }
 
-    public void linkWithCard(AccountWithCard toUpdate) throws SQLException {
+    protected void linkWithCard(AccountWithCard toUpdate) throws SQLException {
 
         try(Connection db = DbConfig.dbConnection()){
 
@@ -103,7 +101,7 @@ public class AccountDb {
         }
     }
 
-    public void add(BasicAccount toAdd) throws SQLException {
+    protected void add(BasicAccount toAdd) throws SQLException {
 
         this.add((AccountWithCard) toAdd);
 
@@ -119,7 +117,7 @@ public class AccountDb {
         }
     }
 
-    public void add(CurrentAccount toAdd) throws SQLException {
+    protected void add(CurrentAccount toAdd) throws SQLException {
 
         this.add((AccountWithCard) toAdd);
 
@@ -143,7 +141,7 @@ public class AccountDb {
         try(Connection db = DbConfig.dbConnection()){
 
             String toExecute = "UPDATE account \n" +
-                                "SET balance = ?, flags = ?" +
+                                "SET balance = ?, flags = ? " +
                                 "WHERE id = ? \n";
 
             PreparedStatement preparedStatement = db.prepareStatement(toExecute);
@@ -156,14 +154,14 @@ public class AccountDb {
         }
     }
 
-    public void update(DepotAccount toUpdate) throws SQLException {
+    protected void update(DepotAccount toUpdate) throws SQLException {
 
         this.update((Account) toUpdate);
 
         try(Connection db = DbConfig.dbConnection()){
 
             String toExecute = "UPDATE depot_account \n" +
-                                "SET last_updated_term = ?" +
+                                "SET last_updated_term = ? " +
                                 "WHERE id = ? \n";
 
             PreparedStatement preparedStatement = db.prepareStatement(toExecute);
@@ -175,14 +173,14 @@ public class AccountDb {
         }
     }
 
-    public void update(SavingsAccount toUpdate) throws SQLException {
+    protected void update(SavingsAccount toUpdate) throws SQLException {
 
         this.update((Account) toUpdate);
 
         try(Connection db = DbConfig.dbConnection()){
 
             String toExecute = "UPDATE savings_account \n" +
-                                "SET interest_rate = ?, last_updated = ?" +
+                                "SET interest_rate = ?, last_updated = ? " +
                                 "WHERE id = ? \n";
 
             PreparedStatement preparedStatement = db.prepareStatement(toExecute);
@@ -195,14 +193,14 @@ public class AccountDb {
         }
     }
 
-    public void update(AccountWithCard toUpdate) throws SQLException {
+    private void update(AccountWithCard toUpdate) throws SQLException {
 
         this.update((Account) toUpdate);
 
         try(Connection db = DbConfig.dbConnection()){
 
             String toExecute = "UPDATE account_with_card \n" +
-                                "SET card_id = ?" +
+                                "SET card_id = ? " +
                                 "WHERE id = ? \n";
 
             PreparedStatement preparedStatement = db.prepareStatement(toExecute);
@@ -215,19 +213,19 @@ public class AccountDb {
         }
     }
 
-    public void update(BasicAccount toUpdate) throws SQLException {
+    protected void update(BasicAccount toUpdate) throws SQLException {
 
         this.update((AccountWithCard) toUpdate);
     }
 
-    public void update(CurrentAccount toUpdate) throws SQLException {
+    protected void update(CurrentAccount toUpdate) throws SQLException {
 
         this.update((AccountWithCard) toUpdate);
 
         try(Connection db = DbConfig.dbConnection()){
 
             String toExecute = "UPDATE current_account \n" +
-                                "SET transaction_fee = ?, extract_fee = ?, add_fee = ?" +
+                                "SET transaction_fee = ?, extract_fee = ?, add_fee = ? " +
                                 "WHERE id = ? \n";
 
             PreparedStatement preparedStatement = db.prepareStatement(toExecute);
@@ -239,5 +237,109 @@ public class AccountDb {
 
             preparedStatement.execute();
         }
+    }
+
+    private void delete(Account toDelete) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "DELETE FROM account \n" +
+                                "WHERE id = ?";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, toDelete.getAccountId());
+
+            preparedStatement.execute();
+        }
+    }
+
+    protected void delete(DepotAccount toDelete) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "DELETE FROM depot_account \n" +
+                                "WHERE id = ?";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, toDelete.getAccountId());
+
+            preparedStatement.execute();
+        }
+
+        this.delete((Account) toDelete);
+    }
+
+    protected void delete(SavingsAccount toDelete) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "DELETE FROM savings_account \n" +
+                                "WHERE id = ?";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, toDelete.getAccountId());
+
+            preparedStatement.execute();
+        }
+
+        this.delete((Account) toDelete);
+    }
+
+    private void delete(AccountWithCard toDelete) throws SQLException {
+
+        DebitCard associatedCard = toDelete.getAssociatedCard();
+        if(associatedCard != null)
+            (new CardDb()).delete(associatedCard);
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "DELETE FROM account_with_card \n" +
+                                "WHERE id = ?";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, toDelete.getAccountId());
+
+            preparedStatement.execute();
+        }
+
+        this.delete((Account) toDelete);
+    }
+
+    protected void delete(BasicAccount toDelete) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "DELETE FROM basic_account \n" +
+                                "WHERE id = ?";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, toDelete.getAccountId());
+
+            preparedStatement.execute();
+        }
+
+        this.delete((AccountWithCard) toDelete);
+    }
+
+    protected void delete(CurrentAccount toDelete) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "DELETE FROM current_account \n" +
+                                "WHERE id = ?";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, toDelete.getAccountId());
+
+            preparedStatement.execute();
+        }
+
+        this.delete((AccountWithCard) toDelete);
     }
 }

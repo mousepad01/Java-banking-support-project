@@ -13,9 +13,6 @@ package AppManager;
 * relatia client-cont-card va trebui reconstruita in aceasta ordine:
 * client, angajat responsabil cu acele contracte, conturile persoanei, cardurile persoanei */
 
-import AppIO.UnlinkedAccount;
-import AppIO.UnlinkedCard;
-
 import java.io.*;
 import java.sql.Date;
 import java.util.*;

@@ -45,7 +45,7 @@ public abstract class AccountWithCard extends Account{
     public void removeCard(){
 
         // mai intai suspend cardul pentru a nu mai putea fi folosit
-        // dupa care de referentiez cont -> card
+        // dupa care dereferentiez cont -> card
 
         associatedCard.dereferenceCard();
         associatedCard = null;
@@ -62,7 +62,7 @@ public abstract class AccountWithCard extends Account{
         this.associatedCard = associatedCard;
     }
 
-    public String getSerialization(){
+    protected String getSerialization(){
 
         StringBuilder serialization = new StringBuilder(super.getSerialization());
 

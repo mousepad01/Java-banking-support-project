@@ -1,6 +1,4 @@
-package AppIO;
-
-import AppManager.IdGenerator;
+package AppManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,7 +30,7 @@ public class UtilsDb {
         }
     }
 
-    public void saveCounters(String cntSessionId, IdGenerator idgen) throws SQLException {
+    protected void saveCounters(String cntSessionId, IdGenerator idgen) throws SQLException {
 
         try(Connection db = DbConfig.dbConnection()){
 
@@ -56,7 +54,7 @@ public class UtilsDb {
         }
     }
 
-    public long[] getCounters(String cntSessionId) throws SQLException{
+    protected long[] getCounters(String cntSessionId) throws SQLException{
 
         try(Connection db = DbConfig.dbConnection()){
 

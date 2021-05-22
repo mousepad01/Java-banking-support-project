@@ -1,4 +1,4 @@
-package AppIO;
+package AppManager;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,7 +12,7 @@ public class DbConfig {
 
     private static Connection dbconnection;
 
-    public static Connection dbConnection(){
+    protected static Connection dbConnection(){
 
         try {
             if (dbconnection == null || dbconnection.isClosed()) {
