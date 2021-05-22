@@ -1,8 +1,6 @@
 package AppManager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class CardDb {
 
@@ -199,5 +197,160 @@ public class CardDb {
         }
 
         this.delete((Card) toDelete);
+    }
+
+    protected CreditCard loadCreditCard(String id, Client cardOwner, Employee empAssistant) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "SELECT c.*, cr.active_status, cr.total_amount, cr.credit_amount\n" +
+                                "FROM card c, credit_card cr\n" +
+                                "WHERE c.id = cr.id\n" +
+                                "AND cr.id = ?;";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, id);
+
+            ResultSet resultCard = preparedStatement.executeQuery();
+
+            if(resultCard.next()){
+
+                String cardId = resultCard.getString("id");
+
+                String empAssistantId = resultCard.getString("emp_assistant_id");
+                if(!empAssistantId.equals(empAssistant.getId()))
+                    throw new IllegalArgumentException("Real employee assistant id does not match id of client given as parameter!");
+
+                String cardOwnerId = resultCard.getString("owner_id");
+                if(!cardOwnerId.equals(cardOwner.getId()))
+                    throw new IllegalArgumentException("Real owner id does not match id of client given as parameter!");
+
+                String cardName = resultCard.getString("name");
+                Date cardEmissionDate = resultCard.getDate("emission_date");
+                boolean cardPinIsInitialized = resultCard.getInt("pin_is_init") == 1;
+                boolean cardSuspendedStatus = resultCard.getInt("suspended_status") == 1;
+                byte[] cardPinHash = fromHexRepr(resultCard.getString("pin_hash"));
+
+                boolean cardActiveStatus = resultCard.getInt("active_status") == 1;
+                double cardTotalCreditAmount = resultCard.getDouble("total_amount");
+                double cardCreditAmount = resultCard.getDouble("credit_amount");
+
+                return new CreditCard(cardSuspendedStatus, cardPinIsInitialized, cardPinHash, empAssistant,
+                                        cardOwner, cardId, cardName, cardEmissionDate, cardActiveStatus,
+                                        cardTotalCreditAmount, cardCreditAmount);
+            }
+
+            return null;
+        }
+    }
+
+    protected DebitCard loadDebitCard(String id, Client cardOwner, Employee empAssistant,
+                                     AccountWithCard associatedAccount) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "SELECT c.*, d.account_id\n" +
+                                "FROM card c, debit_card d\n" +
+                                "WHERE c.id = d.id\n" +
+                                "AND d.id = ?;";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, id);
+
+            ResultSet resultCard = preparedStatement.executeQuery();
+
+            if(resultCard.next()){
+
+                String cardId = resultCard.getString("id");
+
+                String empAssistantId = resultCard.getString("emp_assistant_id");
+                if(!empAssistantId.equals(empAssistant.getId()))
+                    throw new IllegalArgumentException("Real employee assistant id does not match id of client given as parameter!");
+
+                String cardOwnerId = resultCard.getString("owner_id");
+                if(!cardOwnerId.equals(cardOwner.getId()))
+                    throw new IllegalArgumentException("Real owner id does not match id of client given as parameter!");
+
+                String cardName = resultCard.getString("name");
+                Date cardEmissionDate = resultCard.getDate("emission_date");
+                boolean cardPinIsInitialized = resultCard.getInt("pin_is_init") == 1;
+                boolean cardSuspendedStatus = resultCard.getInt("suspended_status") == 1;
+                byte[] cardPinHash = fromHexRepr(resultCard.getString("pin_hash"));
+
+                String associatedAccountId = resultCard.getString("account_id");
+                if(!associatedAccountId.equals(associatedAccount.getAccountId()))
+                    throw new IllegalArgumentException("Real associated account id does not match id of account given as parameter!");
+
+                return new DebitCard(cardSuspendedStatus, cardPinIsInitialized, cardPinHash, empAssistant,
+                        cardOwner, cardId, cardName, cardEmissionDate, associatedAccount);
+            }
+
+            return null;
+        }
+    }
+
+    protected String getOwnerId(String cardId) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "SELECT owner_id\n" +
+                                "FROM card\n" +
+                                "WHERE id = ?;";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, cardId);
+
+            ResultSet resultId = preparedStatement.executeQuery();
+
+            if(resultId.next())
+                return resultId.getString("owner_id");
+
+            return null;
+        }
+    }
+
+    protected String getEmpAssistantId(String cardId) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "SELECT emp_assistant_id\n" +
+                                "FROM card\n" +
+                                "WHERE id = ?;";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, cardId);
+
+            ResultSet resultId = preparedStatement.executeQuery();
+
+            if(resultId.next())
+                return resultId.getString("emp_assistant_id");
+
+            return null;
+        }
+    }
+
+    protected String getAssociatedAccountId(String cardId) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "SELECT account_id\n" +
+                                "FROM debit_card\n" +
+                                "WHERE id = ?;";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, cardId);
+
+            ResultSet resultId = preparedStatement.executeQuery();
+
+            if(resultId.next())
+                return resultId.getString("account_id");
+
+            return null;
+        }
     }
 }

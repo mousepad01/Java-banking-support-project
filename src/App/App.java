@@ -2,8 +2,6 @@ package App;
 
 import AppManager.*;
 
-//import java.time.*;
-
 public class App {
 
     // PENTRU DEBUG

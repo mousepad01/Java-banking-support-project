@@ -3,7 +3,7 @@ package AppManager;
 import java.sql.Date;
 import java.util.Objects;
 
-public abstract class Person {
+public abstract class Person extends DbObject{
 
     protected final String name;
     protected final String surname;

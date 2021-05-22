@@ -341,7 +341,7 @@ public class AccountDb {
         this.delete((AccountWithCard) toDelete);
     }
 
-    public DepotAccount loadDepotAccount(String id, Client accountOwner, Employee empAssistant) throws SQLException {
+    protected DepotAccount loadDepotAccount(String id, Client accountOwner, Employee empAssistant) throws SQLException {
 
         try(Connection db = DbConfig.dbConnection()){
 
@@ -385,7 +385,7 @@ public class AccountDb {
         }
     }
 
-    public SavingsAccount loadSavingsAccount(String id, Client accountOwner, Employee empAssistant) throws SQLException {
+    protected SavingsAccount loadSavingsAccount(String id, Client accountOwner, Employee empAssistant) throws SQLException {
 
         try(Connection db = DbConfig.dbConnection()){
 
@@ -430,7 +430,7 @@ public class AccountDb {
     }
 
     // nu incarca si eventualul card asociat
-    public BasicAccount loadBasicAccount(String id, Client accountOwner, Employee empAssistant) throws SQLException {
+    protected BasicAccount loadBasicAccount(String id, Client accountOwner, Employee empAssistant) throws SQLException {
 
         try(Connection db = DbConfig.dbConnection()){
 
@@ -472,7 +472,7 @@ public class AccountDb {
     }
 
     // nu incarca si eventualul card asociat
-    public CurrentAccount loadCurrentAccount(String id, Client accountOwner, Employee empAssistant) throws SQLException {
+    protected CurrentAccount loadCurrentAccount(String id, Client accountOwner, Employee empAssistant) throws SQLException {
 
         try(Connection db = DbConfig.dbConnection()){
 
@@ -513,6 +513,69 @@ public class AccountDb {
                                             accountBalance, accountFlags, null, accountTransactionFee,
                                             accountExtractFee, accountAddFee);
             }
+
+            return null;
+        }
+    }
+
+    protected String getOwnerId(String accountId) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "SELECT owner_id\n" +
+                                "FROM account\n" +
+                                "WHERE id = ?;";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, accountId);
+
+            ResultSet resultId = preparedStatement.executeQuery();
+
+            if(resultId.next())
+                return resultId.getString("owner_id");
+
+            return null;
+        }
+    }
+
+    protected String getEmpAssistantId(String accountId) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "SELECT emp_assistant_id\n" +
+                                "FROM account\n" +
+                                "WHERE id = ?;";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, accountId);
+
+            ResultSet resultId = preparedStatement.executeQuery();
+
+            if(resultId.next())
+                return resultId.getString("emp_assistant_id");
+
+            return null;
+        }
+    }
+
+    protected String getAssociatedAccountId(String accountId) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()){
+
+            String toExecute = "SELECT card_id\n" +
+                                "FROM account_with_card\n" +
+                                "WHERE id = ?;";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, accountId);
+
+            ResultSet resultId = preparedStatement.executeQuery();
+
+            if(resultId.next())
+                return resultId.getString("card_id");
 
             return null;
         }

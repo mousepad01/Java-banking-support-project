@@ -1,11 +1,9 @@
 package AppManager;
 
-import com.mysql.cj.log.Log;
-
 import java.sql.SQLException;
-import java.time.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 // singleton dar care nu returneaza decat o singura data referinta
 // pentru a nu putea accesa db manager din nici un alt loc
@@ -33,60 +31,153 @@ public class DbManager implements Runnable{
 
     //----------
 
-    private int timerSeconds;
+    private final int timerSeconds;
 
-    private HashMap<String, Integer> changedPersons;
-    private HashMap<String, Integer> changedAccounts;
-    private HashMap<String, Integer> changedCards;
+    private static class ChangeListElement {
 
-    // changed persons code:
-    // 0 - nici o schimbare
-    // 1 - pentru update date ale persoanei / angajatului / clientului (fara carduri / conturi !!!)
-    // 2 - pentru o persoana nou adaugata
+        private Class<?> objectType;
+        private String objectDbId;
 
-    // changed accounts code:
-    // 0 - nici o modificare
-    // 1 - pentru update date ale contului
-    // 2 - pentru un cont nou creat
-    // 3 - pentru un cont sters - va fi eliminat si din hashmap o data ce este procesat
+        // statusCode:
+        // 1 - update
+        // 2 - new object
+        // 3 - delete
 
-    // changed cards code:
-    // 0 - nici o modificare
-    // 1 - pentru update a cardului
-    // 2 - card nou adaugat
-    // 3 - pentru un card sters - va fi eliminat si din hashmap o data procesat
+        private int statusCode;
 
-    public void setUpdatePerson(String id){
+        public ChangeListElement(DbObject dbObject, String objectDbId, int statusCode){
 
+            if(dbObject instanceof Employee){
 
+                this.objectType = Employee.class;
+
+                if(statusCode == 1 || statusCode == 2)
+                    this.statusCode = statusCode;
+                else
+                    throw new IllegalArgumentException("Wrong status type");
+
+                this.objectDbId = objectDbId;
+            }
+
+            else if(dbObject instanceof Client){
+
+                this.objectType = Client.class;
+
+                if(statusCode == 1 || statusCode == 2)
+                    this.statusCode = statusCode;
+                else
+                    throw new IllegalArgumentException("Wrong status type");
+
+                this.objectDbId = objectDbId;
+            }
+
+            else if(dbObject instanceof BasicAccount){
+
+                this.objectType = BasicAccount.class;
+
+                if(statusCode == 1 || statusCode == 2 || statusCode == 3)
+                    this.statusCode = statusCode;
+                else
+                    throw new IllegalArgumentException("Wrong status type");
+
+                this.objectDbId = objectDbId;
+            }
+
+            else if(dbObject instanceof CurrentAccount){
+
+                this.objectType = CurrentAccount.class;
+
+                if(statusCode == 1 || statusCode == 2 || statusCode == 3)
+                    this.statusCode = statusCode;
+                else
+                    throw new IllegalArgumentException("Wrong status type");
+
+                this.objectDbId = objectDbId;
+            }
+
+            else if(dbObject instanceof DepotAccount){
+
+                this.objectType = DepotAccount.class;
+
+                if(statusCode == 1 || statusCode == 2 || statusCode == 3)
+                    this.statusCode = statusCode;
+                else
+                    throw new IllegalArgumentException("Wrong status type");
+
+                this.objectDbId = objectDbId;
+            }
+
+            else if(dbObject instanceof SavingsAccount){
+
+                this.objectType = SavingsAccount.class;
+
+                if(statusCode == 1 || statusCode == 2 || statusCode == 3)
+                    this.statusCode = statusCode;
+                else
+                    throw new IllegalArgumentException("Wrong status type");
+
+                this.objectDbId = objectDbId;
+            }
+
+            else if(dbObject instanceof CreditCard){
+
+                this.objectType = CreditCard.class;
+
+                if(statusCode == 1 || statusCode == 2 || statusCode == 3)
+                    this.statusCode = statusCode;
+                else
+                    throw new IllegalArgumentException("Wrong status type");
+
+                this.objectDbId = objectDbId;
+            }
+
+            else if(dbObject instanceof DebitCard){
+
+                this.objectType = DebitCard.class;
+
+                if(statusCode == 1 || statusCode == 2 || statusCode == 3)
+                    this.statusCode = statusCode;
+                else
+                    throw new IllegalArgumentException("Wrong status type");
+
+                this.objectDbId = objectDbId;
+            }
+        }
+
+        public Class<?> getObjectType(){
+            return objectType;
+        }
+
+        public String getObjectDbId(){
+            return objectDbId;
+        }
+
+        public int getStatusCode(){
+            return statusCode;
+        }
     }
 
-    public void setUpdateAccount(String id){
+    private LinkedList<ChangeListElement> changeList;
 
+    synchronized protected void setChenge(DbObject dbObject, String objectDbId, int statusCode){
 
+        changeList.addLast(new ChangeListElement(dbObject, objectDbId, statusCode));
     }
 
-    public void setUpdateCard(String id){
-
-
-    }
-
-    private DbManager(int timerSeconds){
+    protected DbManager(int timerSeconds){
 
         this.timerSeconds = timerSeconds;
     }
 
     public void run(){
 
-        changedPersons = new HashMap<>();
-        changedAccounts = new HashMap<>();
-        changedCards = new HashMap<>();
+        changeList = new LinkedList<>();
 
         PersonDb personDb = new PersonDb();
         AccountDb accountDb = new AccountDb();
         CardDb cardDb = new CardDb();
 
-        try {
+        /*try {
 
             ArrayList<Employee> loadedEmployees = personDb.loadAllEmployees();
             ArrayList<Client> loadedClients = personDb.loadAllClients();
@@ -97,6 +188,21 @@ public class DbManager implements Runnable{
             Logger log = Logger.getLogger();
             log.logMessage("Error while trying to load initial info from database: " + err.getMessage());
             return;
+        }*/
+
+        while(!DbManager.done){
+
+
+
+            try {
+                Thread.sleep(1000 * this.timerSeconds);
+            }
+            catch (InterruptedException err) {
+
+                Logger log = Logger.getLogger();
+                log.logMessage("Error while sleeping in main loop in db manager thread: " + err.getMessage());
+                return;
+            }
         }
     }
 }

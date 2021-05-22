@@ -14,7 +14,7 @@ import java.util.Random;
     cu ajutorul unei metode protected care retine de cate ori a fost apelata
  */
 
-public abstract class Card {
+public abstract class Card extends DbObject{
 
     protected boolean suspendedStatus;
 

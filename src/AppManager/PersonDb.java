@@ -157,7 +157,7 @@ public class PersonDb {
         // stergerea sau modificarea conturilor asociate are loc separat
     }
 
-    public ArrayList<Employee> loadAllEmployees() throws SQLException {
+    protected ArrayList<Employee> loadAllEmployees() throws SQLException {
 
         try(Connection db = DbConfig.dbConnection()) {
 
@@ -195,7 +195,7 @@ public class PersonDb {
     }
 
     // incarca fara conturi si carduri asociate
-    public ArrayList<Client> loadAllClients() throws SQLException {
+    protected ArrayList<Client> loadAllClients() throws SQLException {
 
         try(Connection db = DbConfig.dbConnection()) {
 
@@ -228,7 +228,7 @@ public class PersonDb {
         }
     }
 
-    public Employee loadEmployee(String id) throws SQLException {
+    protected Employee loadEmployee(String id) throws SQLException {
 
         try(Connection db = DbConfig.dbConnection()) {
 
@@ -266,7 +266,7 @@ public class PersonDb {
     }
 
     // incarca fara conturi si carduri asociate
-    public Client loadClient(String id) throws SQLException {
+    protected Client loadClient(String id) throws SQLException {
 
         try(Connection db = DbConfig.dbConnection()) {
 
