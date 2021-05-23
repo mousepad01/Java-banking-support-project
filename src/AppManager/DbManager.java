@@ -4,34 +4,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.concurrent.Semaphore;
 
 // singleton dar care nu returneaza decat o singura data referinta
 // pentru a nu putea accesa db manager din nici un alt loc
 // decat atunci cand creez thread ul dorit la inceputul rularii programului
 
 public class DbManager implements Runnable{
-
-    private static boolean alreadyCreated;
-    public static boolean done;
-
-    public static DbManager CreateDbManager(int timerSeconds){
-
-        if(!alreadyCreated){
-
-            alreadyCreated = true;
-            return new DbManager(timerSeconds);
-        }
-
-        return null;
-    }
-
-    public static boolean isAlreadyCreated(){
-        return alreadyCreated;
-    }
-
-    //----------
-
-    private final int timerSeconds;
 
     private static class ChangeListElement {
 
@@ -157,52 +136,71 @@ public class DbManager implements Runnable{
         }
     }
 
-    private LinkedList<ChangeListElement> changeList;
+    private static final HashMap<Long, DbManager> threadDbManagers;
 
-    synchronized protected void setChenge(DbObject dbObject, String objectDbId, int statusCode){
-
-        changeList.addLast(new ChangeListElement(dbObject, objectDbId, statusCode));
+    public static DbManager getDbManger(Long threadId){
+        return DbManager.threadDbManagers.get(threadId);
     }
 
-    protected DbManager(int timerSeconds){
+    static{
+        threadDbManagers = new HashMap<>();
+    }
 
-        this.timerSeconds = timerSeconds;
+    private boolean done;
+    private final LinkedList<ChangeListElement> changeList;
+    private final Semaphore changeListCounter;
+
+    private final PersonDb personDb;
+    private final AccountDb accountDb;
+    private final CardDb cardDb;
+
+    public void maskAsDone(){
+        this.done = true;
+    }
+
+    public void setChange(DbObject dbObject, String objectDbId, int statusCode){
+        synchronized (this.changeList){
+            this.changeList.addLast(new ChangeListElement(dbObject, objectDbId, statusCode));
+        }
+    }
+
+    public void processChange(ChangeListElement toProcess){
+
+    }
+
+    private ChangeListElement getChange(){
+        synchronized(this.changeList){
+            return this.changeList.remove();
+        }
+    }
+
+    public DbManager(Semaphore changeListCounter){
+
+        this.done = false;
+        this.changeList = new LinkedList<>();
+        this.changeListCounter = changeListCounter;
+
+        this.personDb = new PersonDb();
+        this.accountDb = new AccountDb();
+        this.cardDb = new CardDb();
+
+        threadDbManagers.put(Thread.currentThread().getId(), this);
     }
 
     public void run(){
 
-        changeList = new LinkedList<>();
+        try{
+            while(!this.done)
+                while(this.changeListCounter.availablePermits() > 0){
 
-        PersonDb personDb = new PersonDb();
-        AccountDb accountDb = new AccountDb();
-        CardDb cardDb = new CardDb();
-
-        /*try {
-
-            ArrayList<Employee> loadedEmployees = personDb.loadAllEmployees();
-            ArrayList<Client> loadedClients = personDb.loadAllClients();
-
-
-        } catch (SQLException err) {
+                    this.changeListCounter.acquire();
+                    this.processChange(this.getChange());
+                }
+        }
+        catch (Exception err) {
 
             Logger log = Logger.getLogger();
-            log.logMessage("Error while trying to load initial info from database: " + err.getMessage());
-            return;
-        }*/
-
-        while(!DbManager.done){
-
-
-
-            try {
-                Thread.sleep(1000 * this.timerSeconds);
-            }
-            catch (InterruptedException err) {
-
-                Logger log = Logger.getLogger();
-                log.logMessage("Error while sleeping in main loop in db manager thread: " + err.getMessage());
-                return;
-            }
+            log.logMessage("Error while running main loop of a DbManager thread: " + err.getMessage());
         }
     }
 }

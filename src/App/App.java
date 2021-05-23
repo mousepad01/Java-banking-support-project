@@ -2,6 +2,8 @@ package App;
 
 import AppManager.*;
 
+import java.util.concurrent.Semaphore;
+
 public class App {
 
     // PENTRU DEBUG
@@ -14,31 +16,34 @@ public class App {
         }
     }
 
-    private static Thread dbManagerThread;
+    public static Thread mainDbManagerThread;
+    public static Semaphore mainDbManagerSemaphore;
 
     private static void initDb(){
 
-        if(!DbManager.isAlreadyCreated()) {
+        DbInit.init();
 
-            DbInit.init();
+        mainDbManagerSemaphore = new Semaphore(0, true);
 
-            // voi avea un thread pe fundal care monitorizeaza schimbarile in memorie
-            // cu ajutorul unui tabel de dispersie public
-            // si in cazul in care detecteaza o schimbare, actualizeaza baza de date
-            // verificarile se vor face o data la timerSeconds secunde
-
-            //dbManagerThread = new Thread(DbManager.CreateDbManager(5));
-            //dbManagerThread.start();
-        }
+        mainDbManagerThread = new Thread(new DbManager(mainDbManagerSemaphore));
+        mainDbManagerThread.start();
     }
 
     private static void disconnectDb() throws InterruptedException {
 
-        if(DbManager.isAlreadyCreated()) {
+        DbManager dbManager = DbManager.getDbManger(mainDbManagerThread.getId());
 
-            DbManager.done = true;
-            dbManagerThread.join();
+        if(dbManager != null){
+
+            dbManager.maskAsDone();
+            mainDbManagerThread.join();
         }
+        else{
+
+            Logger log = Logger.getLogger();
+            log.logMessage("Warning: could not find DbManager object to be closed");
+        }
+
     }
 
     public static void main(String[] args) throws InterruptedException {
