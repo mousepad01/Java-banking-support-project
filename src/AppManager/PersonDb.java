@@ -237,6 +237,7 @@ public class PersonDb {
                                 "WHERE e.id = ?;";
 
             PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
             preparedStatement.setString(1, id);
 
             ResultSet resultEmp = preparedStatement.executeQuery();
@@ -275,6 +276,9 @@ public class PersonDb {
                                 "WHERE p.id = ?;";
 
             PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, id);
+
             ResultSet resultClient = preparedStatement.executeQuery(toExecute);
 
             if(resultClient.next()){
@@ -294,6 +298,22 @@ public class PersonDb {
             }
 
             return null;
+        }
+    }
+
+    protected boolean isInDb(Person toSearch) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()) {
+
+            String toExecute = "SELECT p.id " +
+                                "FROM person p\n" +
+                                "WHERE p.id = ?;";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, toSearch.getId());
+
+            return preparedStatement.executeQuery(toExecute).next();
         }
     }
 }

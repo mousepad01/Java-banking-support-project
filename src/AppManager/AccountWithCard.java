@@ -17,8 +17,8 @@ public abstract class AccountWithCard extends Account{
             associatedCard = new DebitCard(this, contractAssistant, name, cardId);
             return associatedCard;
         }
-        // else EXCEPTIE
-        return null;
+        else
+            throw new IllegalArgumentException("Associated card already exists");
     }
 
     protected DebitCard associateNewCard(String name, Employee contractAssistant){
@@ -30,8 +30,8 @@ public abstract class AccountWithCard extends Account{
             associatedCard = new DebitCard(this, contractAssistant, name, idGenerator.getCardId("DEBIT"));
             return associatedCard;
         }
-        // else EXCEPTIE
-        return null;
+        else
+            throw new IllegalArgumentException("Associated card already exists");
     }
 
     protected void linkCard(DebitCard toLink){

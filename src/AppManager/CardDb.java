@@ -353,4 +353,20 @@ public class CardDb {
             return null;
         }
     }
+
+    protected boolean isInDb(Card toSearch) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()) {
+
+            String toExecute = "SELECT c.id " +
+                                "FROM card c\n" +
+                                "WHERE c.id = ?;";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, toSearch.getCardId());
+
+            return preparedStatement.executeQuery(toExecute).next();
+        }
+    }
 }

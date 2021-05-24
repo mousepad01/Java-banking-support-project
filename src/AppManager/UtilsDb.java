@@ -30,25 +30,26 @@ public class UtilsDb {
         }
     }
 
-    protected void saveCounters(String cntSessionId, IdGenerator idgen) throws SQLException {
+    protected void updateCounters(String cntSessionId, IdGenerator idgen) throws SQLException {
 
         try(Connection db = DbConfig.dbConnection()){
 
             long[] counters = idgen.previewIds();
-            String toExecute = "INSERT INTO id_counters(counters_session_id, person_ct, basic_ct, " +
-                                                        "current_ct, savings_ct, depot_ct, debit_ct, credit_ct)" +
-                                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            String toExecute = "UPDATE id_counters\n" +
+                                "SET person_ct = ?, basic_ct = ?, current_ct = ?, savings_ct = ?, " +
+                                "depot_ct = ?, credit_ct = ?, debit_ct = ?\n" +
+                                "WHERE counters_session_id = ?;";
 
             PreparedStatement preparedStatement = db.prepareStatement(toExecute);
 
-            preparedStatement.setString(1, cntSessionId);
-            preparedStatement.setLong(2, counters[0]);
-            preparedStatement.setLong(3, counters[1]);
-            preparedStatement.setLong(4, counters[2]);
-            preparedStatement.setLong(5, counters[3]);
-            preparedStatement.setLong(6, counters[4]);
-            preparedStatement.setLong(7, counters[5]);
-            preparedStatement.setLong(8, counters[6]);
+            preparedStatement.setLong(1, counters[0]);
+            preparedStatement.setLong(2, counters[1]);
+            preparedStatement.setLong(3, counters[2]);
+            preparedStatement.setLong(4, counters[3]);
+            preparedStatement.setLong(5, counters[4]);
+            preparedStatement.setLong(6, counters[5]);
+            preparedStatement.setLong(7, counters[6]);
+            preparedStatement.setString(8, cntSessionId);
 
             preparedStatement.execute();
         }

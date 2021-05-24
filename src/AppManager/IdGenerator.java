@@ -89,7 +89,7 @@ public class IdGenerator {
         try{
 
             UtilsDb db = new UtilsDb();
-            db.saveCounters("main", this);
+            db.updateCounters("main", this);
         }
         catch (SQLException err){
 
@@ -119,7 +119,7 @@ public class IdGenerator {
         try{
 
             UtilsDb db = new UtilsDb();
-            db.saveCounters("main", this);
+            db.updateCounters("main", this);
         }
         catch (SQLException err){
 
@@ -137,7 +137,7 @@ public class IdGenerator {
         try{
 
             UtilsDb db = new UtilsDb();
-            db.saveCounters("main", this);
+            db.updateCounters("main", this);
         }
         catch (SQLException err){
 

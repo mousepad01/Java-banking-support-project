@@ -12,24 +12,6 @@ public class Employee extends Person {
     private String workplace;
     private int salary;
 
-    public static Employee newEmployee(String name, String surname, String birthDateStr, String address, String email,
-                                       String phoneNumber, String hireDateStr, String job, String workplace, int salary){
-
-        Employee toReturn = new Employee(name, surname, birthDateStr, address, email,
-                phoneNumber, hireDateStr, job, workplace, salary);
-
-        try{
-            (new PersonDb()).add(toReturn);
-        }
-        catch(SQLException err){
-
-            Logger log = Logger.getLogger();
-            log.logMessage("Erro while trying to save new Employee in database: " + err.getMessage());
-        }
-
-        return toReturn;
-    }
-
     protected Employee(String name, String surname, String birthDateStr, String address, String email,
                     String phoneNumber, String hireDateStr, String job, String workplace, String id, int salary) {
 

@@ -17,21 +17,22 @@ public class App {
     }
 
     public static Thread mainDbManagerThread;
-    public static Semaphore mainDbManagerSemaphore;
 
     private static void initDb(){
 
         DbInit.init();
 
-        mainDbManagerSemaphore = new Semaphore(0, true);
+        DbManager dbManager = new DbManager(new Semaphore(0, true));
 
-        mainDbManagerThread = new Thread(new DbManager(mainDbManagerSemaphore));
+        mainDbManagerThread = new Thread(dbManager);
+        DbManager.threadDbManagers.put(new Pair(Thread.currentThread().getId(), mainDbManagerThread.getId()), dbManager);
+
         mainDbManagerThread.start();
     }
 
     private static void disconnectDb() throws InterruptedException {
 
-        DbManager dbManager = DbManager.getDbManger(mainDbManagerThread.getId());
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId(), mainDbManagerThread.getId());
 
         if(dbManager != null){
 
@@ -51,10 +52,10 @@ public class App {
         initDb();
 
         Client client;
-        client = Client.newClient("Aa", "Bb", "2000-12-29");
+        client = new Client("Aa", "Bb", "2000-12-29");
 
         Employee emp;
-        emp = Employee.newEmployee("Ff", "Bgb", "2001-11-27", "str 1", "a@y",
+        emp = new Employee("Ff", "Bgb", "2001-11-27", "str 1", "a@y",
                 "0713444555", "1999-10-09", "INFORMATICIAN",
                 "REMOTE", 4000);
 
@@ -156,5 +157,7 @@ public class App {
         log.endLogging();*/
 
         disconnectDb();
+
+        Logger.getLogger().endLogging();
     }
 }

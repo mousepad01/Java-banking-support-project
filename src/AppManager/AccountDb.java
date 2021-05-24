@@ -580,4 +580,20 @@ public class AccountDb {
             return null;
         }
     }
+
+    protected boolean isInDb(Account toSearch) throws SQLException {
+
+        try(Connection db = DbConfig.dbConnection()) {
+
+            String toExecute = "SELECT a.id " +
+                                "FROM account a\n" +
+                                "WHERE a.id = ?;";
+
+            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+            preparedStatement.setString(1, toSearch.getAccountId());
+
+            return preparedStatement.executeQuery(toExecute).next();
+        }
+    }
 }

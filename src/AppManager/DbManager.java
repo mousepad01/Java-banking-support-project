@@ -89,6 +89,7 @@ public class DbManager implements Runnable{
                     else
                         throw new IllegalArgumentException("Wrong status type");
                 }
+
                 else
                     throw new IllegalArgumentException("Object to change is not appropriate: class " + dbObject.getClass());
 
@@ -117,13 +118,15 @@ public class DbManager implements Runnable{
 
             // loadDependencies vor fi procesate conform unei conventii:
             // by default:
-            // in cazul clientului / angajatului, dependentele sunt ignorate
+            // in cazul clientului / angajatului / id generator, dependentele sunt ignorate
+            //
             // in cazul conturilor, primul angajat este considerat emp assistant, primul client - owner ul
-            //                      si (optional) primul card de debit cardul asociat
             //                      restul sunt ignorate
+            //
             // in cazul cardurilor, primul angajat este considerat emp assistant, primul client - owner ul,
-            //                      daca este card de debit :primul cont care are card - contul asociat
+            //                      daca este card de debit: primul cont care are card - contul asociat
             //                      restul sunt ignorate
+
             this.loadDependencies = loadDependencies;
         }
 
@@ -140,11 +143,12 @@ public class DbManager implements Runnable{
         public DbObject ref;
     }
 
-    private static final HashMap<Long, DbManager> threadDbManagers;
+    // (thread, thread db manager corespunzator) -> db manager corespunzator
+    public static final HashMap<Pair, DbManager> threadDbManagers;
     private static final HashMap<String, LoadRef> loadedObjects;
 
-    public static DbManager getDbManger(Long threadId){
-        return DbManager.threadDbManagers.get(threadId);
+    public static DbManager getDbManger(Long currentThreadId, Long threadId){
+        return DbManager.threadDbManagers.get(new Pair(currentThreadId, threadId));
     }
 
     static{
@@ -164,6 +168,7 @@ public class DbManager implements Runnable{
     public void maskAsDone(){
         synchronized (this.changeList){
             this.changeList.add(new ChangeListElement(new END_DB_CONN()));
+            this.changeListCounter.release();
         }
     }
 
@@ -171,6 +176,7 @@ public class DbManager implements Runnable{
     protected void setChange(DbObject dbObject, int statusCode){
         synchronized (this.changeList){
             this.changeList.addLast(new ChangeListElement(dbObject, statusCode));
+            this.changeListCounter.release();
         }
     }
 
@@ -183,7 +189,7 @@ public class DbManager implements Runnable{
     }
 
     // pentru load
-    protected DbObject loadObject(String objectDbId, Class<?> objectType) throws InterruptedException {
+    protected DbObject loadObject(String objectDbId, Class<?> objectType, DbObject[] loadDependencies) throws InterruptedException {
 
         LoadRef loadRef = loadRefInit(objectDbId);
         synchronized(loadRef){
@@ -191,7 +197,7 @@ public class DbManager implements Runnable{
             if(loadRef.ref == null){
 
                 synchronized (this.changeList){
-                    this.changeList.addLast(new ChangeListElement(objectDbId, objectType));
+                    this.changeList.addLast(new ChangeListElement(objectDbId, objectType, loadDependencies));
                 }
 
                 loadRef.wait();
@@ -303,7 +309,95 @@ public class DbManager implements Runnable{
             else if(toProcess.objectType == Client.class)
                 loaded = this.personDb.loadClient(toProcess.objectDbId);
 
-            else if(toProcess.objectType )
+            else if(toProcess.objectType == SavingsAccount.class || toProcess.objectType == DepotAccount.class ||
+                    toProcess.objectType == BasicAccount.class || toProcess.objectType == CurrentAccount.class ||
+                    toProcess.objectType == CreditCard.class){
+
+                Employee empAssistant = null;
+                Client owner = null;
+
+                boolean empFound = false;
+                boolean ownerFound = false;
+
+                for(int i = 0; i < toProcess.loadDependencies.length; i++){
+
+                    if(!empFound && toProcess.loadDependencies[i] instanceof Employee) {
+                        empAssistant = (Employee) toProcess.loadDependencies[i];
+                        empFound = true;
+                    }
+
+                    if(!ownerFound && toProcess.loadDependencies[i] instanceof Client) {
+                        owner = (Client) toProcess.loadDependencies[i];
+                        ownerFound = true;
+                    }
+                }
+
+                if(!empFound || !ownerFound) {
+
+                    LoadRef loadRef = loadedObjects.get(toProcess.objectDbId);
+                    synchronized (loadRef){
+                        loadRef.notifyAll();
+                    }
+
+                    throw new IllegalArgumentException("Invalid dependencies while trying to load an account or card from DB");
+                }
+
+                if(toProcess.objectType == SavingsAccount.class)
+                    loaded = this.accountDb.loadSavingsAccount(toProcess.objectDbId, owner, empAssistant);
+
+                else if (toProcess.objectType == DepotAccount.class)
+                    loaded = this.accountDb.loadDepotAccount(toProcess.objectDbId, owner, empAssistant);
+
+                else if (toProcess.objectType == BasicAccount.class)
+                    loaded = this.accountDb.loadBasicAccount(toProcess.objectDbId, owner, empAssistant);
+
+                else if (toProcess.objectType == CurrentAccount.class)
+                    loaded = this.accountDb.loadCurrentAccount(toProcess.objectDbId, owner, empAssistant);
+
+                else if (toProcess.objectType == CreditCard.class)
+                    loaded = this.cardDb.loadCreditCard(toProcess.objectDbId, owner, empAssistant);
+            }
+
+            else if(toProcess.objectType == DebitCard.class){
+
+                Employee empAssistant = null;
+                Client owner = null;
+                AccountWithCard account = null;
+
+                boolean empFound = false;
+                boolean ownerFound = false;
+                boolean accoundFound = false;
+
+                for(int i = 0; i < toProcess.loadDependencies.length; i++){
+
+                    if(!empFound && toProcess.loadDependencies[i] instanceof Employee) {
+                        empAssistant = (Employee) toProcess.loadDependencies[i];
+                        empFound = true;
+                    }
+
+                    if(!ownerFound && toProcess.loadDependencies[i] instanceof Client) {
+                        owner = (Client) toProcess.loadDependencies[i];
+                        ownerFound = true;
+                    }
+
+                    if(!accoundFound && toProcess.loadDependencies[i] instanceof AccountWithCard) {
+                        account = (AccountWithCard) toProcess.loadDependencies[i];
+                        accoundFound = true;
+                    }
+                }
+
+                if(!empFound || !ownerFound || !accoundFound){
+
+                    LoadRef loadRef = loadedObjects.get(toProcess.objectDbId);
+                    synchronized (loadRef){
+                        loadRef.notifyAll();
+                    }
+
+                    throw new IllegalArgumentException("Invalid dependencies while trying to load card from DB");
+                }
+
+                loaded = this.cardDb.loadDebitCard(toProcess.objectDbId, owner, empAssistant, account);
+            }
 
             LoadRef loadRef = loadedObjects.get(toProcess.objectDbId);
             synchronized (loadRef){
@@ -332,8 +426,6 @@ public class DbManager implements Runnable{
         this.cardDb = new CardDb();
 
         this.log = Logger.getLogger();
-
-        threadDbManagers.put(Thread.currentThread().getId(), this);
     }
 
     @Override
