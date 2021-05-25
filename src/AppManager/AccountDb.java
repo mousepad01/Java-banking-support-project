@@ -576,7 +576,7 @@ public class AccountDb {
         }
     }
 
-    protected String getEmpAssistantId(String accountId) throws SQLException {
+    protected String getEmpAssistantId(String accountId){
 
         try(Connection db = DbConfig.dbConnection()){
 
@@ -595,9 +595,13 @@ public class AccountDb {
 
             return null;
         }
+        catch(SQLException err){
+            return null;
+        }
+
     }
 
-    protected String getAssociatedAccountId(String accountId) throws SQLException {
+    protected String getAssociatedAccountId(String accountId) {
 
         try(Connection db = DbConfig.dbConnection()){
 
@@ -614,6 +618,9 @@ public class AccountDb {
             if(resultId.next())
                 return resultId.getString("card_id");
 
+            return null;
+        }
+        catch(SQLException err){
             return null;
         }
     }

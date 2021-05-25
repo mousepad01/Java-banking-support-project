@@ -240,7 +240,8 @@ public class PersonDb {
 
             String toExecute = "SELECT p.*, e.hire_date, e.job, e.workplace, e.salary\n" +
                                 "FROM employee e, person p\n" +
-                                "WHERE e.id = ?;";
+                                "WHERE e.id = p.id " +
+                                "AND e.id = ?;";
 
             PreparedStatement preparedStatement = db.prepareStatement(toExecute);
 
@@ -279,7 +280,8 @@ public class PersonDb {
 
             String toExecute = "SELECT p.*, c.registration_date\n" +
                                 "FROM person p, client c\n" +
-                                "WHERE p.id = ?;";
+                                "WHERE p.id = c.id " +
+                                "AND c.id = ?;";
 
             PreparedStatement preparedStatement = db.prepareStatement(toExecute);
             preparedStatement.setString(1, id);

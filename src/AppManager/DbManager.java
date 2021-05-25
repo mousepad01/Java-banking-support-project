@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.Semaphore;
+import java.util.function.Function;
 
 public class DbManager implements Runnable{
 
@@ -108,7 +109,8 @@ public class DbManager implements Runnable{
 
             if(objectType != Employee.class && objectType != Client.class && objectType != DepotAccount.class &&
                 objectType != SavingsAccount.class && objectType != BasicAccount.class &&
-                objectType != CurrentAccount.class && objectType != CreditCard.class && objectType != DebitCard.class)
+                objectType != CurrentAccount.class && objectType != CreditCard.class && objectType != DebitCard.class &&
+                objectType != String.class)
 
                 throw new IllegalArgumentException("Invalid object class to be searched in database");
 
@@ -118,14 +120,17 @@ public class DbManager implements Runnable{
 
             // loadDependencies vor fi procesate conform unei conventii:
             // by default:
-            // in cazul clientului / angajatului / id generator, dependentele sunt ignorate
-            //
-            // in cazul conturilor, primul angajat este considerat emp assistant, primul client - owner ul
-            //                      restul sunt ignorate
-            //
-            // in cazul cardurilor, primul angajat este considerat emp assistant, primul client - owner ul,
-            //                      daca este card de debit: primul cont care are card - contul asociat
-            //                      restul sunt ignorate
+            // in caz de load al unui obiect:
+                // in cazul clientului / angajatului / id generator, dependentele sunt ignorate
+                //
+                // in cazul conturilor, primul angajat este considerat emp assistant, primul client - owner ul
+                //                      restul sunt ignorate
+                //
+                // in cazul cardurilor, primul angajat este considerat emp assistant, primul client - owner ul,
+                //                      daca este card de debit: primul cont care are card - contul asociat
+                //                      restul sunt ignorate
+            // in caz de load al unui id / string:
+                // primul obiect contine o referinta la metoda care trebuie apelata din bd
 
             this.loadDependencies = loadDependencies;
         }
@@ -204,12 +209,18 @@ public class DbManager implements Runnable{
             if(loadRef.ref == null){
 
                 synchronized (this.changeList){
+
                     this.changeList.addLast(new ChangeListElement(objectDbId, objectType, loadDependencies));
                     this.changeListCounter.release();
                 }
 
                 loadRef.wait();
             }
+
+            // nu pastrez cache uite string urile din query urile auxiliare
+            // doar obiectele de tip Person / Account / Card
+            if(objectType == String.class)
+                this.removeLoadedObj(objectDbId);
         }
 
         return loadRef.ref;
@@ -359,8 +370,15 @@ public class DbManager implements Runnable{
                     }
                 }
 
-                // daca empAssistant sau owner sunt null, sunt trimise intentionat null mai departe
-                // pentru a fi procesate corespunzator de accountDb / cardDb
+                if(!empFound || !ownerFound) {
+
+                    LoadRef loadRef = loadedObjects.get(toProcess.objectDbId);
+                    synchronized (loadRef){
+                        loadRef.notifyAll();
+                    }
+
+                    throw new IllegalArgumentException("Invalid dependencies while trying to load an account or card from DB");
+                }
 
                 LoadRef loadRef = loadedObjects.get(toProcess.objectDbId);
                 synchronized (loadRef){
@@ -422,6 +440,16 @@ public class DbManager implements Runnable{
                 }
 
                 loaded = this.cardDb.loadDebitCard(toProcess.objectDbId, owner, empAssistant, account);
+            }
+
+            else if(toProcess.objectType == String.class){
+
+                for(int i = 0; i < toProcess.loadDependencies.length; i++)
+                    if(toProcess.loadDependencies[i] instanceof Function<?, ?>) {
+
+                        loaded = ((Function<String, String>) toProcess.loadDependencies[0]).apply(toProcess.objectDbId);
+                        break;
+                    }
             }
 
             LoadRef loadRef = loadedObjects.get(toProcess.objectDbId);

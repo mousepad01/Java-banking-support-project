@@ -309,7 +309,7 @@ public class CardDb {
         }
     }
 
-    protected String getOwnerId(String cardId) throws SQLException {
+    protected String getOwnerId(String cardId) {
 
         try(Connection db = DbConfig.dbConnection()){
 
@@ -328,9 +328,12 @@ public class CardDb {
 
             return null;
         }
+        catch(SQLException err){
+            return null;
+        }
     }
 
-    protected String getEmpAssistantId(String cardId) throws SQLException {
+    protected String getEmpAssistantId(String cardId) {
 
         try(Connection db = DbConfig.dbConnection()){
 
@@ -349,9 +352,12 @@ public class CardDb {
 
             return null;
         }
+        catch(SQLException err){
+            return null;
+        }
     }
 
-    protected String getAssociatedAccountId(String cardId) throws SQLException {
+    protected String getAssociatedAccountId(String cardId) {
 
         try(Connection db = DbConfig.dbConnection()){
 
@@ -370,6 +376,10 @@ public class CardDb {
 
             return null;
         }
+        catch(SQLException err){
+            return null;
+        }
+
     }
 
     protected boolean isInDb(Card toSearch) throws SQLException {

@@ -53,14 +53,15 @@ public class App {
         initDb();
 
         Client client;
-        client = Client.newClient("Aa", "Bb", "2000-12-29");
+        //client = Client.newClient("Aa", "Bb", "2000-12-29");
+        client = Client.loadClient("192837492107", null);
 
         Employee emp;
         /*emp = Employee.newEmployee("Ff", "Bgb", "2001-11-27", "str 1", "a@y",
                         "0713444555", "1999-10-09", "INFORMATICIAN",
                             "REMOTE", 4000);*/
 
-        emp = Employee.loadEmployee("192837492132");
+        //emp = Employee.loadEmployee("192837492132");
 
         /*DepotAccount depotAccount = client.createDepotAccount("cont de depozit", emp, "ONE MONTH", 1300);
         SavingsAccount savingsAccount = client.createSavingsAccount("cont de economii", emp);

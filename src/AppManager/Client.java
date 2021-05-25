@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.function.Function;
 
 public class Client extends Person{
 
@@ -17,10 +18,58 @@ public class Client extends Person{
     private HashMap<String, Card> cards;
     private HashMap<String, Account> accounts;
 
-    public static Client loadClient(String clientId) throws InterruptedException {
+    public static Client loadClient(String clientId, HashMap<String, Employee> empDependencies) throws InterruptedException {
 
         DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
         Client loaded = (Client) dbManager.loadObject(clientId, Client.class, null);
+
+        Function<String, String> accGetEmpAssistantId = (new AccountDb())::getEmpAssistantId;
+        Object[] getDepAccLoad = new Function[]{accGetEmpAssistantId};
+
+        Employee empAssistant;
+        String empAssistantId;
+
+        if(empDependencies == null)
+            empDependencies = new HashMap<>();
+
+        for(String accountId : loaded.accountsIds){
+
+            empAssistantId = (String) dbManager.loadObject(accountId, String.class, getDepAccLoad);
+
+            if(empDependencies.get(empAssistantId) != null)
+                empAssistant = empDependencies.get(empAssistantId);
+            else {
+
+                empAssistant = (Employee) dbManager.loadObject(empAssistantId, Employee.class, null);
+                empDependencies.put(empAssistantId, empAssistant);
+            }
+
+            Object[] accDepLoad = new Object[]{empAssistant, loaded};
+            //System.out.println(SavingsAccount.class);
+            // trebuie sa incerc fiecare tabel sa vad ce fel de cont este
+
+            Object[] a = new Object[4];
+            a[0] = dbManager.loadObject(accountId, SavingsAccount.class, accDepLoad);
+            a[1] = dbManager.loadObject(accountId, DepotAccount.class, accDepLoad);
+            a[2] = dbManager.loadObject(accountId, BasicAccount.class, accDepLoad);
+            a[3] = dbManager.loadObject(accountId, CurrentAccount.class, accDepLoad);
+
+            int i;
+            for(i = 0; i < 4; i++)
+                if(a[i] != null)
+                    break;
+
+            //i -= 1;
+            if(i < 4)
+                System.out.println(accountId + " " + a[i]);
+            //System.out.println(((Account)a[i]).getSerialization());
+
+            //loaded.accounts.put(accountId, (Account)a[i]);
+        }
+
+        Function<String, String> cardGetEmpAssistantId = (new CardDb())::getEmpAssistantId;
+        Function<String, String> cardGetAssociatedAccount = (new CardDb())::getAssociatedAccountId;
+        Object[] getDepCardLoad = new Function[]{cardGetEmpAssistantId, cardGetAssociatedAccount};
 
         return loaded;
     }
