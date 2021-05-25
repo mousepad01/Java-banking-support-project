@@ -56,11 +56,13 @@ public class App {
         client = Client.newClient("Aa", "Bb", "2000-12-29");
 
         Employee emp;
-        emp = Employee.newEmployee("Ff", "Bgb", "2001-11-27", "str 1", "a@y",
+        /*emp = Employee.newEmployee("Ff", "Bgb", "2001-11-27", "str 1", "a@y",
                         "0713444555", "1999-10-09", "INFORMATICIAN",
-                            "REMOTE", 4000);
+                            "REMOTE", 4000);*/
 
-        DepotAccount depotAccount = client.createDepotAccount("cont de depozit", emp, "ONE MONTH", 1300);
+        emp = Employee.loadEmployee("192837492132");
+
+        /*DepotAccount depotAccount = client.createDepotAccount("cont de depozit", emp, "ONE MONTH", 1300);
         SavingsAccount savingsAccount = client.createSavingsAccount("cont de economii", emp);
 
         CurrentAccount cont = client.createCurrentAccount("cont curent", emp);
@@ -81,7 +83,7 @@ public class App {
 
         client.deleteAccount("cont curent");
 
-        client.removeDebitCard("card de debit");
+        client.removeDebitCard("card de debit");*/
 
         /*System.out.println(client.getClientFunds());
         System.out.println(client.getCreditDebt());

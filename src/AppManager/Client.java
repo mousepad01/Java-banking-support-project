@@ -7,15 +7,23 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Objects;
 
-public class Client extends Person {
+public class Client extends Person{
 
     private final Date registrationDate;
 
-    private ArrayList<String> cardsIds; // pentru situatia cand scot un obiect din fisier/ din db si vreau sa retin id urile
-    private ArrayList<String> accountsIds;
+    protected ArrayList<String> cardsIds; // pentru situatia cand scot un obiect din fisier/ din db si vreau sa retin id urile
+    protected ArrayList<String> accountsIds;
 
     private HashMap<String, Card> cards;
     private HashMap<String, Account> accounts;
+
+    public static Client loadClient(String clientId) throws InterruptedException {
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        Client loaded = (Client) dbManager.loadObject(clientId, Client.class, null);
+
+        return loaded;
+    }
 
     public static Client newClient(String name, String surname, String birthDateStr){
 

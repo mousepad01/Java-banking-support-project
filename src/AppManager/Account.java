@@ -3,7 +3,7 @@ package AppManager;
 import java.sql.Date;
 import java.util.Objects;
 
-public abstract class Account extends DbObject{
+public abstract class Account {
 
     protected final String accountId;
     protected final Client owner;

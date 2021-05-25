@@ -16,13 +16,13 @@ public class DbManager implements Runnable{
         // 4 - load from database
 
         public int statusCode;
-        public DbObject dbObject;
+        public Object dbObject;
         public String objectDbId;
         public Class<?> objectType;
-        public DbObject[] loadDependencies;
+        public Object[] loadDependencies;
 
         // pentru update, new, delete
-        public ChangeListElement(DbObject dbObject, int statusCode){
+        public ChangeListElement(Object dbObject, int statusCode){
 
             if(dbObject != null){
 
@@ -101,7 +101,7 @@ public class DbManager implements Runnable{
         }
 
         // pentru load
-        public ChangeListElement(String objectDbId, Class<?> objectType, DbObject[] loadDependencies){
+        public ChangeListElement(String objectDbId, Class<?> objectType, Object[] loadDependencies){
 
             if(objectDbId == null)
                 throw new NullPointerException("No ID to be searched in database");
@@ -135,12 +135,12 @@ public class DbManager implements Runnable{
         }
     }
 
-    private static class END_DB_CONN extends DbObject { }
+    private static class END_DB_CONN { }
 
     // pentru a avea un obiect pe care sa fac wait si notify
     // daca foloseam direct referinte in map ul loadedObjects, nu ar mai fi functionat
     private static class LoadRef {
-        public DbObject ref;
+        public Object ref;
     }
 
     // thread -> (db manager thread, db manager)
@@ -174,7 +174,7 @@ public class DbManager implements Runnable{
     }
 
     // pentru update, new, delete
-    protected void setChange(DbObject dbObject, int statusCode){
+    protected void setChange(Object dbObject, int statusCode){
         synchronized (this.changeList){
             this.changeList.addLast(new ChangeListElement(dbObject, statusCode));
             this.changeListCounter.release();
@@ -196,7 +196,7 @@ public class DbManager implements Runnable{
     }
 
     // pentru load
-    protected DbObject loadObject(String objectDbId, Class<?> objectType, DbObject[] loadDependencies) throws InterruptedException {
+    protected Object loadObject(String objectDbId, Class<?> objectType, Object[] loadDependencies) throws InterruptedException {
 
         LoadRef loadRef = loadRefInit(objectDbId);
         synchronized(loadRef){
@@ -205,6 +205,7 @@ public class DbManager implements Runnable{
 
                 synchronized (this.changeList){
                     this.changeList.addLast(new ChangeListElement(objectDbId, objectType, loadDependencies));
+                    this.changeListCounter.release();
                 }
 
                 loadRef.wait();
@@ -327,7 +328,7 @@ public class DbManager implements Runnable{
 
         else if(toProcess.statusCode == 4){
 
-            DbObject loaded = null;
+            Object loaded = null;
 
             if(toProcess.objectType == Employee.class)
                 loaded = this.personDb.loadEmployee(toProcess.objectDbId);
@@ -358,14 +359,12 @@ public class DbManager implements Runnable{
                     }
                 }
 
-                if(!empFound || !ownerFound) {
+                // daca empAssistant sau owner sunt null, sunt trimise intentionat null mai departe
+                // pentru a fi procesate corespunzator de accountDb / cardDb
 
-                    LoadRef loadRef = loadedObjects.get(toProcess.objectDbId);
-                    synchronized (loadRef){
-                        loadRef.notifyAll();
-                    }
-
-                    throw new IllegalArgumentException("Invalid dependencies while trying to load an account or card from DB");
+                LoadRef loadRef = loadedObjects.get(toProcess.objectDbId);
+                synchronized (loadRef){
+                    loadRef.notifyAll();
                 }
 
                 if(toProcess.objectType == SavingsAccount.class)

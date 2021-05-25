@@ -282,9 +282,7 @@ public class PersonDb {
                                 "WHERE p.id = ?;";
 
             PreparedStatement preparedStatement = db.prepareStatement(toExecute);
-
             preparedStatement.setString(1, id);
-
             ResultSet resultClient = preparedStatement.executeQuery();
 
             if(resultClient.next()){
@@ -299,8 +297,35 @@ public class PersonDb {
 
                 Date clientRegistrationDate = resultClient.getDate("registration_date");
 
+                toExecute = "SELECT a.id\n" +
+                            "FROM account a\n" +
+                            "WHERE a.owner_id = ?;";
+
+                preparedStatement = db.prepareStatement(toExecute);
+                preparedStatement.setString(1, personId);
+                ResultSet resultAccIds = preparedStatement.executeQuery();
+
+                ArrayList<String> clientAccIds = new ArrayList<>();
+
+                while(resultAccIds.next())
+                    clientAccIds.add(resultAccIds.getString(1));
+
+                toExecute = "SELECT c.id\n" +
+                            "FROM card c\n" +
+                            "WHERE c.owner_id = ?;";
+
+                preparedStatement = db.prepareStatement(toExecute);
+                preparedStatement.setString(1, personId);
+                ResultSet resultCardIds = preparedStatement.executeQuery();
+
+                ArrayList<String> clientCardIds = new ArrayList<>();
+
+                while(resultCardIds.next())
+                    clientCardIds.add(resultCardIds.getString(1));
+
                 return new Client(personName, personSurname, personBirthdate.toString(), personAddress, personEmail,
-                                    personPhone, clientRegistrationDate.toString(), personId, null, null);
+                                personPhone, clientRegistrationDate.toString(), personId, clientAccIds, clientCardIds);
+
             }
 
             return null;

@@ -12,6 +12,12 @@ public class Employee extends Person {
     private String workplace;
     private int salary;
 
+    public static Employee loadEmployee(String empId) throws InterruptedException {
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        return (Employee) dbManager.loadObject(empId, Employee.class, null);
+    }
+
     public static Employee newEmployee(String name, String surname, String birthDateStr, String address, String email,
                                        String phoneNumber, String hireDateStr, String job, String workplace, int salary){
 
