@@ -111,11 +111,11 @@ public abstract class Account {
 
         StringBuilder serialization = new StringBuilder("ACCOUNT: ");
 
-        serialization.append(this.getAccountId()).append(";");
-        serialization.append(this.getOwner().getId()).append(";");
-        serialization.append(this.getName()).append(";");
-        serialization.append(this.getContractAssistant().getId()).append(";"); // account assistant tot timpul nenul
-        serialization.append(this.getCreationDate().toString()).append(";");
+        serialization.append(this.accountId).append(";");
+        serialization.append(this.owner.getId()).append(";");
+        serialization.append(this.name).append(";");
+        serialization.append(this.contractAssistant.getId()).append(";"); // account assistant tot timpul nenul
+        serialization.append(this.creationDate.toString()).append(";");
         serialization.append(this.getBalance()).append(";");
         serialization.append(this.flags).append(";");
 

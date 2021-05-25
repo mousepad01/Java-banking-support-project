@@ -217,7 +217,7 @@ public class DbManager implements Runnable{
                 loadRef.wait();
             }
 
-            // nu pastrez cache uite string urile din query urile auxiliare
+            // nu pastrez null urile si nici cache urile string urilor din query urile auxiliare
             // doar obiectele de tip Person / Account / Card
             if(objectType == String.class)
                 this.removeLoadedObj(objectDbId);
@@ -378,11 +378,6 @@ public class DbManager implements Runnable{
                     }
 
                     throw new IllegalArgumentException("Invalid dependencies while trying to load an account or card from DB");
-                }
-
-                LoadRef loadRef = loadedObjects.get(toProcess.objectDbId);
-                synchronized (loadRef){
-                    loadRef.notifyAll();
                 }
 
                 if(toProcess.objectType == SavingsAccount.class)

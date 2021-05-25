@@ -59,12 +59,7 @@ public class Client extends Person{
                 if(a[i] != null)
                     break;
 
-            //i -= 1;
-            if(i < 4)
-                System.out.println(accountId + " " + a[i]);
-            //System.out.println(((Account)a[i]).getSerialization());
-
-            //loaded.accounts.put(accountId, (Account)a[i]);
+            loaded.accounts.put(accountId, (Account)a[i]);
         }
 
         Function<String, String> cardGetEmpAssistantId = (new CardDb())::getEmpAssistantId;
