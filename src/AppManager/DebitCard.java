@@ -28,7 +28,6 @@ public class DebitCard extends Card{
         this.associatedAccount = associatedAccount;
     }
 
-    // poate fi apelata doar prin metoda din cont
     protected void dereferenceCard(){
 
         associatedAccount = null;
@@ -38,8 +37,6 @@ public class DebitCard extends Card{
     public boolean isValid(){
         return associatedAccount == null;
     }
-
-    /// toate actiunile vor fi incapsulate in blocuri try catch
 
     public double add(double val){
 

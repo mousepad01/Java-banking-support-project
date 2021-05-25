@@ -61,6 +61,9 @@ public class SavingsAccount extends Account{
         }
         else
             interestRate = HIGH_INTEREST;
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
     }
 
     public double add(double val){
@@ -144,6 +147,9 @@ public class SavingsAccount extends Account{
         }
 
         lastUpdated = new Date(currentTime);
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
     }
 
     protected String getSerialization(){
@@ -169,6 +175,9 @@ public class SavingsAccount extends Account{
     public void suspendAccount(){
         updateBalance();
         this.flags |= 1;
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
     }
 
     @Override
@@ -176,6 +185,9 @@ public class SavingsAccount extends Account{
         if((flags & 1) == 1)
             lastUpdated = new Date(System.currentTimeMillis());
         this.flags &= 0b11111110;
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
     }
 
     @Override

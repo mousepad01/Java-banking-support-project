@@ -60,8 +60,8 @@ public class UtilsDb {
         try(Connection db = DbConfig.dbConnection()){
 
             String toExecute = "SELECT * " +
-                    "FROM id_counters " +
-                    "WHERE counters_session_id = ?";
+                                "FROM id_counters " +
+                                "WHERE counters_session_id = ?";
 
             PreparedStatement preparedStatement = db.prepareStatement(toExecute);
             preparedStatement.setString(1, cntSessionId);

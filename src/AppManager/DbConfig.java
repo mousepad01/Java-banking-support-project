@@ -10,20 +10,15 @@ public class DbConfig {
     private static final String USER = "root";
     private static final String PASSWORD = "";
 
-    private static Connection dbconnection;
-
     protected static Connection dbConnection(){
 
         try {
-            if (dbconnection == null || dbconnection.isClosed()) {
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                dbconnection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-            }
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            return DriverManager.getConnection(DB_URL, USER, PASSWORD);
 
         } catch (SQLException | ClassNotFoundException exception) {
             exception.printStackTrace();
+            return null;
         }
-
-        return dbconnection;
     }
 }

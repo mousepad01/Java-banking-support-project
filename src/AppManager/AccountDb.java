@@ -7,57 +7,62 @@ public class AccountDb {
 
     private void add(Account toAdd) throws SQLException {
 
-        try(Connection db = DbConfig.dbConnection()){
+        if(!isInDb(toAdd))
+            try(Connection db = DbConfig.dbConnection()){
 
-            String toExecute = "INSERT INTO account (id, owner_id, name, emp_assistant_id, creation_date, balance, flags) VALUES(?, ?, ?, ?, ?, ?, ?)";
+                String toExecute = "INSERT INTO account (id, owner_id, name, emp_assistant_id, creation_date, balance, flags) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
-            preparedStatement.setString(1, toAdd.getAccountId());
-            preparedStatement.setString(2, toAdd.getOwner().getId());
-            preparedStatement.setString(3, toAdd.getName());
-            preparedStatement.setString(4, toAdd.getContractAssistant().getId());
-            preparedStatement.setDate(5, toAdd.getCreationDate());
-            preparedStatement.setDouble(6, toAdd.getBalance());
-            preparedStatement.setInt(7, toAdd.getFlags());
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+                preparedStatement.setString(1, toAdd.getAccountId());
+                preparedStatement.setString(2, toAdd.getOwner().getId());
+                preparedStatement.setString(3, toAdd.getName());
+                preparedStatement.setString(4, toAdd.getContractAssistant().getId());
+                preparedStatement.setDate(5, toAdd.getCreationDate());
+                preparedStatement.setDouble(6, toAdd.getBalance());
+                preparedStatement.setInt(7, toAdd.getFlags());
 
-            preparedStatement.execute();
-        }
-
+                preparedStatement.execute();
+            }
     }
 
     protected void add(DepotAccount toAdd) throws SQLException {
 
-        this.add((Account) toAdd);
+        if(!isInDb(toAdd)){
 
-        try(Connection db = DbConfig.dbConnection()){
+            this.add((Account) toAdd);
 
-            String toExecute = "INSERT INTO depot_account (id, term, last_updated_term) VALUES(?, ?, ?)";
+            try(Connection db = DbConfig.dbConnection()){
 
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
-            preparedStatement.setString(1, toAdd.getAccountId());
-            preparedStatement.setInt(2, toAdd.getTerm());
-            preparedStatement.setDate(3, toAdd.getLastUpdatedTerm());
+                String toExecute = "INSERT INTO depot_account (id, term, last_updated_term) VALUES(?, ?, ?)";
 
-            preparedStatement.execute();
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+                preparedStatement.setString(1, toAdd.getAccountId());
+                preparedStatement.setInt(2, toAdd.getTerm());
+                preparedStatement.setDate(3, toAdd.getLastUpdatedTerm());
+
+                preparedStatement.execute();
+            }
         }
     }
 
     protected void add(SavingsAccount toAdd) throws SQLException {
 
-        this.add((Account) toAdd);
+        if(!isInDb(toAdd)) {
 
-        try(Connection db = DbConfig.dbConnection()){
+            this.add((Account) toAdd);
 
-            String toExecute = "INSERT INTO savings_account (id, interest_rate, last_updated) VALUES(?, ?, ?)";
+            try (Connection db = DbConfig.dbConnection()) {
 
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
-            preparedStatement.setString(1, toAdd.getAccountId());
-            preparedStatement.setDouble(2, toAdd.getInterestRate());
-            preparedStatement.setDate(3, toAdd.getLastUpdated());
+                String toExecute = "INSERT INTO savings_account (id, interest_rate, last_updated) VALUES(?, ?, ?)";
 
-            preparedStatement.execute();
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+                preparedStatement.setString(1, toAdd.getAccountId());
+                preparedStatement.setDouble(2, toAdd.getInterestRate());
+                preparedStatement.setDate(3, toAdd.getLastUpdated());
+
+                preparedStatement.execute();
+            }
         }
-
     }
 
     protected void linkWithCard(AccountWithCard toUpdate) throws SQLException {
@@ -80,57 +85,66 @@ public class AccountDb {
 
     private void add(AccountWithCard toAdd) throws SQLException {
 
-        this.add((Account) toAdd);
+        if(!isInDb(toAdd)) {
 
-        try(Connection db = DbConfig.dbConnection()){
+            this.add((Account) toAdd);
 
-            String toExecute = "INSERT INTO account_with_card(id) VALUES(?)";
+            try (Connection db = DbConfig.dbConnection()) {
 
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
-            preparedStatement.setString(1, toAdd.getAccountId());
+                String toExecute = "INSERT INTO account_with_card(id) VALUES(?)";
 
-            preparedStatement.execute();
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+                preparedStatement.setString(1, toAdd.getAccountId());
 
-            try{
-                linkWithCard(toAdd);
+                preparedStatement.execute();
+
+                try {
+                    linkWithCard(toAdd);
+                } catch (SQLException ignored) {
+                }
+
             }
-            catch(SQLException ignored){ }
-
         }
     }
 
     protected void add(BasicAccount toAdd) throws SQLException {
 
-        this.add((AccountWithCard) toAdd);
+        if(!isInDb(toAdd)) {
 
-        try(Connection db = DbConfig.dbConnection()){
+            this.add((AccountWithCard) toAdd);
 
-            String toExecute = "INSERT INTO basic_account(id) VALUES(?)";
+            try (Connection db = DbConfig.dbConnection()) {
 
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+                String toExecute = "INSERT INTO basic_account(id) VALUES(?)";
 
-            preparedStatement.setString(1, toAdd.getAccountId());
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
 
-            preparedStatement.execute();
+                preparedStatement.setString(1, toAdd.getAccountId());
+
+                preparedStatement.execute();
+            }
         }
     }
 
     protected void add(CurrentAccount toAdd) throws SQLException {
 
-        this.add((AccountWithCard) toAdd);
+        if(!isInDb(toAdd)) {
 
-        try(Connection db = DbConfig.dbConnection()){
+            this.add((AccountWithCard) toAdd);
 
-            String toExecute = "INSERT INTO current_account(id, transfer_fee, extract_fee, add_fee) VALUES(?, ?, ?, ?)";
+            try (Connection db = DbConfig.dbConnection()) {
 
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+                String toExecute = "INSERT INTO current_account(id, transaction_fee, extract_fee, add_fee) VALUES(?, ?, ?, ?)";
 
-            preparedStatement.setString(1, toAdd.getAccountId());
-            preparedStatement.setDouble(2, toAdd.getTransactionFee());
-            preparedStatement.setDouble(3, toAdd.getExtractFee());
-            preparedStatement.setDouble(4, toAdd.getAddFee());
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
 
-            preparedStatement.execute();
+                preparedStatement.setString(1, toAdd.getAccountId());
+                preparedStatement.setDouble(2, toAdd.getTransactionFee());
+                preparedStatement.setDouble(3, toAdd.getExtractFee());
+                preparedStatement.setDouble(4, toAdd.getAddFee());
+
+                preparedStatement.execute();
+            }
         }
     }
 
@@ -197,17 +211,22 @@ public class AccountDb {
 
         try(Connection db = DbConfig.dbConnection()){
 
-            String toExecute = "UPDATE account_with_card \n" +
-                                "SET card_id = ? " +
-                                "WHERE id = ? \n";
-
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
-
             DebitCard associatedCard = toUpdate.getAssociatedCard();
-            preparedStatement.setString(1, associatedCard == null ? null : associatedCard.getCardId());
-            preparedStatement.setString(2, toUpdate.getAccountId());
 
-            preparedStatement.execute();
+            if(associatedCard == null || (new CardDb()).isInDb(associatedCard)) {
+
+                String toExecute = "UPDATE account_with_card \n" +
+                        "SET card_id = ? " +
+                        "WHERE id = ? \n";
+
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+
+
+                preparedStatement.setString(1, associatedCard == null ? null : associatedCard.getCardId());
+                preparedStatement.setString(2, toUpdate.getAccountId());
+
+                preparedStatement.execute();
+            }
         }
     }
 
@@ -239,106 +258,124 @@ public class AccountDb {
 
     private void delete(Account toDelete) throws SQLException {
 
-        try(Connection db = DbConfig.dbConnection()){
+        if(isInDb(toDelete)){
 
-            String toExecute = "DELETE FROM account \n" +
-                                "WHERE id = ?";
+            try(Connection db = DbConfig.dbConnection()){
 
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+                String toExecute = "DELETE FROM account \n" +
+                        "WHERE id = ?";
 
-            preparedStatement.setString(1, toDelete.getAccountId());
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
 
-            preparedStatement.execute();
+                preparedStatement.setString(1, toDelete.getAccountId());
+
+                preparedStatement.execute();
+            }
         }
     }
 
     protected void delete(DepotAccount toDelete) throws SQLException {
 
-        try(Connection db = DbConfig.dbConnection()){
+        if(isInDb(toDelete)){
 
-            String toExecute = "DELETE FROM depot_account \n" +
-                                "WHERE id = ?";
+            try(Connection db = DbConfig.dbConnection()){
 
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+                String toExecute = "DELETE FROM depot_account \n" +
+                        "WHERE id = ?";
 
-            preparedStatement.setString(1, toDelete.getAccountId());
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
 
-            preparedStatement.execute();
+                preparedStatement.setString(1, toDelete.getAccountId());
+
+                preparedStatement.execute();
+            }
+
+            this.delete((Account) toDelete);
         }
-
-        this.delete((Account) toDelete);
     }
 
     protected void delete(SavingsAccount toDelete) throws SQLException {
 
-        try(Connection db = DbConfig.dbConnection()){
+        if(isInDb(toDelete)){
 
-            String toExecute = "DELETE FROM savings_account \n" +
-                                "WHERE id = ?";
+            try(Connection db = DbConfig.dbConnection()){
 
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+                String toExecute = "DELETE FROM savings_account \n" +
+                        "WHERE id = ?";
 
-            preparedStatement.setString(1, toDelete.getAccountId());
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
 
-            preparedStatement.execute();
+                preparedStatement.setString(1, toDelete.getAccountId());
+
+                preparedStatement.execute();
+            }
+
+            this.delete((Account) toDelete);
         }
-
-        this.delete((Account) toDelete);
     }
 
     private void delete(AccountWithCard toDelete) throws SQLException {
 
-        DebitCard associatedCard = toDelete.getAssociatedCard();
-        if(associatedCard != null)
-            (new CardDb()).delete(associatedCard);
+        if(isInDb(toDelete)) {
 
-        try(Connection db = DbConfig.dbConnection()){
+            DebitCard associatedCard = toDelete.getAssociatedCard();
+            if (associatedCard != null && (new CardDb()).isInDb(associatedCard))
+                (new CardDb()).delete(associatedCard);
 
-            String toExecute = "DELETE FROM account_with_card \n" +
-                                "WHERE id = ?";
+            try (Connection db = DbConfig.dbConnection()) {
 
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+                String toExecute = "DELETE FROM account_with_card \n" +
+                        "WHERE id = ?";
 
-            preparedStatement.setString(1, toDelete.getAccountId());
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
 
-            preparedStatement.execute();
+                preparedStatement.setString(1, toDelete.getAccountId());
+
+                preparedStatement.execute();
+            }
+
+            this.delete((Account) toDelete);
         }
-
-        this.delete((Account) toDelete);
     }
 
     protected void delete(BasicAccount toDelete) throws SQLException {
 
-        try(Connection db = DbConfig.dbConnection()){
+        if(isInDb(toDelete)){
 
-            String toExecute = "DELETE FROM basic_account \n" +
-                                "WHERE id = ?";
+            try(Connection db = DbConfig.dbConnection()){
 
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+                String toExecute = "DELETE FROM basic_account \n" +
+                        "WHERE id = ?";
 
-            preparedStatement.setString(1, toDelete.getAccountId());
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
 
-            preparedStatement.execute();
+                preparedStatement.setString(1, toDelete.getAccountId());
+
+                preparedStatement.execute();
+            }
+
+            this.delete((AccountWithCard) toDelete);
         }
-
-        this.delete((AccountWithCard) toDelete);
     }
 
     protected void delete(CurrentAccount toDelete) throws SQLException {
 
-        try(Connection db = DbConfig.dbConnection()){
+        if (isInDb(toDelete)) {
 
-            String toExecute = "DELETE FROM current_account \n" +
-                                "WHERE id = ?";
+            try(Connection db = DbConfig.dbConnection()){
 
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+                String toExecute = "DELETE FROM current_account \n" +
+                        "WHERE id = ?";
 
-            preparedStatement.setString(1, toDelete.getAccountId());
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
 
-            preparedStatement.execute();
+                preparedStatement.setString(1, toDelete.getAccountId());
+
+                preparedStatement.execute();
+            }
+
+            this.delete((AccountWithCard) toDelete);
         }
-
-        this.delete((AccountWithCard) toDelete);
     }
 
     protected DepotAccount loadDepotAccount(String id, Client accountOwner, Employee empAssistant) throws SQLException {
@@ -583,9 +620,11 @@ public class AccountDb {
 
     protected boolean isInDb(Account toSearch) throws SQLException {
 
+        boolean toReturn;
+
         try(Connection db = DbConfig.dbConnection()) {
 
-            String toExecute = "SELECT a.id " +
+            String toExecute = "SELECT a.id\n" +
                                 "FROM account a\n" +
                                 "WHERE a.id = ?;";
 
@@ -593,7 +632,9 @@ public class AccountDb {
 
             preparedStatement.setString(1, toSearch.getAccountId());
 
-            return preparedStatement.executeQuery(toExecute).next();
+            toReturn = preparedStatement.executeQuery().next();
         }
+
+        return toReturn;
     }
 }

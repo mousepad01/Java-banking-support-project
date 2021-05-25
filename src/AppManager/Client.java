@@ -17,6 +17,16 @@ public class Client extends Person {
     private HashMap<String, Card> cards;
     private HashMap<String, Account> accounts;
 
+    public static Client newClient(String name, String surname, String birthDateStr){
+
+        Client toReturn = new Client(name, surname, birthDateStr);
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(toReturn, 2);
+
+        return toReturn;
+    }
+
     protected Client(String name, String surname, String birthDateStr, String address, String email, String phoneNumber,
                   String registrationDateStr, String id, ArrayList<String> accountsIds, ArrayList<String> cardsIds) {
 
@@ -120,6 +130,9 @@ public class Client extends Person {
         BasicAccount newBasicAccount = new BasicAccount(idGenerator.getAccountId("BASIC"), this, name, contractAssistant);
         this.accounts.put(name, newBasicAccount);
 
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(newBasicAccount, 2);
+
         return newBasicAccount;
     }
 
@@ -129,6 +142,9 @@ public class Client extends Person {
 
         CurrentAccount newCurrentAccount = new CurrentAccount(idGenerator.getAccountId("CURRENT"), this, name, contractAssistant);
         this.accounts.put(name, newCurrentAccount);
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(newCurrentAccount, 2);
 
         return newCurrentAccount;
     }
@@ -140,6 +156,9 @@ public class Client extends Person {
         SavingsAccount newSavingsAccount = new SavingsAccount(idGenerator.getAccountId("SAVINGS"), this, name, contractAssistant);
         this.accounts.put(name, newSavingsAccount);
 
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(newSavingsAccount, 2);
+
         return newSavingsAccount;
     }
 
@@ -149,6 +168,9 @@ public class Client extends Person {
 
         DepotAccount newDepotAccount = new DepotAccount(idGenerator.getAccountId("DEPOT"), this, name, contractAssistant, type, initialValue);
         this.accounts.put(name, newDepotAccount);
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(newDepotAccount, 2);
 
         return newDepotAccount;
     }
@@ -168,6 +190,9 @@ public class Client extends Person {
 
         cards.put(cardName, newDebitCard);
 
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(newDebitCard, 2);
+
         return newDebitCard;
     }
 
@@ -178,10 +203,13 @@ public class Client extends Person {
         CreditCard newCreditCard = new CreditCard(this, idGenerator.getCardId("CREDIT"), cardName, contractAssistant, requestedAmmount);
         cards.put(cardName, newCreditCard);
 
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(newCreditCard, 2);
+
         return newCreditCard;
     }
 
-    public BasicAccount createBasicAccount(String name, Employee contractAssistant, String accountId) {
+    /*public BasicAccount createBasicAccount(String name, Employee contractAssistant, String accountId) {
 
         BasicAccount newBasicAccount = new BasicAccount(accountId, this, name, contractAssistant);
         this.accounts.put(name, newBasicAccount);
@@ -237,7 +265,7 @@ public class Client extends Person {
         cards.put(cardName, newCreditCard);
 
         return newCreditCard;
-    }
+    }*/
 
     public void removeDebitCard(String cardName){
 
@@ -245,8 +273,11 @@ public class Client extends Person {
         if(toRemove == null)
             throw new NullPointerException("card to remove does not exist");
 
-        AccountWithCard associatedAccount = (AccountWithCard) accounts.get(toRemove.getAccountName());
-        associatedAccount.removeCard();
+        //AccountWithCard associatedAccount = (AccountWithCard) accounts.get(toRemove.getAccountName());
+        //associatedAccount.removeCard();
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(toRemove, 3);
 
         cards.remove(cardName);
     }
@@ -259,6 +290,9 @@ public class Client extends Person {
 
         toRemove.dereferenceCard();
 
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(toRemove, 3);
+
         cards.remove(cardName);
     }
 
@@ -269,7 +303,13 @@ public class Client extends Person {
         if(toRemove == null)
             throw new NullPointerException("account to remove does not exist");
 
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(toRemove, 3);
+
         accounts.remove(name);
+
+        if(toRemove instanceof AccountWithCard accountWithCard)
+            cards.remove(accountWithCard.getAccountId());
     }
 
     protected String getSerialization(){

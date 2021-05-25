@@ -91,10 +91,16 @@ public abstract class Account extends DbObject{
 
     public void suspendAccount(){
         this.flags |= 1;
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
     }
 
     public void dropSuspended(){
         this.flags &= 0b11111110;
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
     }
 
     public Employee getContractAssistant(){

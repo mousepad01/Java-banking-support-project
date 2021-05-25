@@ -37,62 +37,69 @@ public class CardDb {
 
     private void add(Card toAdd) throws SQLException {
 
-        try(Connection db = DbConfig.dbConnection()){
+        if(!isInDb(toAdd))
+            try(Connection db = DbConfig.dbConnection()){
 
-            String toExecute = "INSERT INTO card(id, emp_assistant_id, owner_id, name, emission_date, " +
-                                                "pin_is_init, suspended_status, pin_hash) " +
-                                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                String toExecute = "INSERT INTO card(id, emp_assistant_id, owner_id, name, emission_date, " +
+                                                    "pin_is_init, suspended_status, pin_hash) " +
+                                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
 
-            preparedStatement.setString(1, toAdd.getCardId());
-            preparedStatement.setString(2, toAdd.getContractAssistant().getId());
-            preparedStatement.setString(3, toAdd.getOwner().getId());
-            preparedStatement.setString(4, toAdd.getName());
-            preparedStatement.setDate(5, toAdd.getEmissionDate());
-            preparedStatement.setInt(6, toAdd.isPinInitialized() ? 1:0);
-            preparedStatement.setInt(7, toAdd.isSuspended() ? 1:0);
-            preparedStatement.setString(8, toHexRepr(toAdd.getPinHash()));
+                preparedStatement.setString(1, toAdd.getCardId());
+                preparedStatement.setString(2, toAdd.getContractAssistant().getId());
+                preparedStatement.setString(3, toAdd.getOwner().getId());
+                preparedStatement.setString(4, toAdd.getName());
+                preparedStatement.setDate(5, toAdd.getEmissionDate());
+                preparedStatement.setInt(6, toAdd.isPinInitialized() ? 1:0);
+                preparedStatement.setInt(7, toAdd.isSuspended() ? 1:0);
+                preparedStatement.setString(8, toHexRepr(toAdd.getPinHash()));
 
-            preparedStatement.execute();
-        }
+                preparedStatement.execute();
+            }
     }
 
     protected void add(CreditCard toAdd) throws SQLException {
 
-        this.add((Card) toAdd);
+        if(!isInDb(toAdd)){
 
-        try(Connection db = DbConfig.dbConnection()){
+            this.add((Card) toAdd);
 
-            String toExecute = "INSERT INTO credit_card(id, active_status, total_amount, credit_amount) " +
-                                "VALUES (?, ?, ?, ?)";
+            try(Connection db = DbConfig.dbConnection()){
 
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+                String toExecute = "INSERT INTO credit_card(id, active_status, total_amount, credit_amount) " +
+                        "VALUES (?, ?, ?, ?)";
 
-            preparedStatement.setString(1, toAdd.getCardId());
-            preparedStatement.setInt(2, toAdd.isActive() ? 1:0);
-            preparedStatement.setDouble(3, toAdd.getTotalAmount());
-            preparedStatement.setDouble(4, toAdd.getAmount());
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
 
-            preparedStatement.execute();
+                preparedStatement.setString(1, toAdd.getCardId());
+                preparedStatement.setInt(2, toAdd.isActive() ? 1:0);
+                preparedStatement.setDouble(3, toAdd.getTotalAmount());
+                preparedStatement.setDouble(4, toAdd.getAmount());
+
+                preparedStatement.execute();
+            }
         }
     }
 
     protected void add(DebitCard toAdd) throws SQLException {
 
-        this.add((Card) toAdd);
+        if(!isInDb(toAdd)){
 
-        try(Connection db = DbConfig.dbConnection()){
+            this.add((Card) toAdd);
 
-            String toExecute = "INSERT INTO debit_card (id, account_id) " +
-                                "VALUES (?, ?)";
+            try(Connection db = DbConfig.dbConnection()){
 
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+                String toExecute = "INSERT INTO debit_card (id, account_id) " +
+                        "VALUES (?, ?)";
 
-            preparedStatement.setString(1, toAdd.getCardId());
-            preparedStatement.setString(2, toAdd.getAccount().getAccountId());
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
 
-            preparedStatement.execute();
+                preparedStatement.setString(1, toAdd.getCardId());
+                preparedStatement.setString(2, toAdd.getAccount().getAccountId());
+
+                preparedStatement.execute();
+            }
         }
     }
 
@@ -142,61 +149,72 @@ public class CardDb {
 
     private void delete(Card toDelete) throws SQLException {
 
-        try(Connection db = DbConfig.dbConnection()){
+        if(isInDb(toDelete)){
 
-            String toExecute = "DELETE FROM card \n" +
-                                "WHERE id = ?";
+            try(Connection db = DbConfig.dbConnection()){
 
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+                String toExecute = "DELETE FROM card \n" +
+                        "WHERE id = ?";
 
-            preparedStatement.setString(1, toDelete.getCardId());
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
 
-            preparedStatement.execute();
+                preparedStatement.setString(1, toDelete.getCardId());
+
+                preparedStatement.execute();
+            }
         }
     }
 
     protected void delete(CreditCard toDelete) throws SQLException {
 
-        try(Connection db = DbConfig.dbConnection()){
+        if(isInDb(toDelete)){
 
-            String toExecute = "DELETE FROM credit_card \n" +
-                                "WHERE id = ?";
+            try(Connection db = DbConfig.dbConnection()){
 
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+                String toExecute = "DELETE FROM credit_card \n" +
+                        "WHERE id = ?";
 
-            preparedStatement.setString(1, toDelete.getCardId());
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
 
-            preparedStatement.execute();
+                preparedStatement.setString(1, toDelete.getCardId());
+
+                preparedStatement.execute();
+            }
+
+            this.delete((Card) toDelete);
         }
-
-        this.delete((Card) toDelete);
     }
 
     protected void delete(DebitCard toDelete) throws SQLException {
 
-        try(Connection db = DbConfig.dbConnection()){
+        if(isInDb(toDelete)){
 
-            String toExecute = "UPDATE debit_card \n" +
-                                "SET account_id = NULL " +
-                                "WHERE id = ? \n";
+            try(Connection db = DbConfig.dbConnection()){
 
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+                String toExecute = "UPDATE account_with_card \n" +
+                                    "SET card_id = NULL " +
+                                    "WHERE id = ? \n";
 
-            preparedStatement.setString(1, toDelete.getCardId());
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
 
-            preparedStatement.execute();
+                preparedStatement.setString(1, toDelete.getAccount().getAccountId());
 
-            toExecute = "DELETE FROM debit_card \n" +
+                preparedStatement.execute();
+
+                toExecute = "DELETE FROM debit_card \n" +
                         "WHERE id = ?";
 
-            preparedStatement = db.prepareStatement(toExecute);
+                preparedStatement = db.prepareStatement(toExecute);
 
-            preparedStatement.setString(1, toDelete.getCardId());
+                preparedStatement.setString(1, toDelete.getCardId());
 
-            preparedStatement.execute();
+                preparedStatement.execute();
+
+                toDelete.getAccount().removeCard();
+            }
+
+            this.delete((Card) toDelete);
         }
-
-        this.delete((Card) toDelete);
     }
 
     protected CreditCard loadCreditCard(String id, Client cardOwner, Employee empAssistant) throws SQLException {
@@ -356,9 +374,11 @@ public class CardDb {
 
     protected boolean isInDb(Card toSearch) throws SQLException {
 
+        boolean toReturn;
+
         try(Connection db = DbConfig.dbConnection()) {
 
-            String toExecute = "SELECT c.id " +
+            String toExecute = "SELECT c.id\n" +
                                 "FROM card c\n" +
                                 "WHERE c.id = ?;";
 
@@ -366,7 +386,9 @@ public class CardDb {
 
             preparedStatement.setString(1, toSearch.getCardId());
 
-            return preparedStatement.executeQuery(toExecute).next();
+            toReturn = preparedStatement.executeQuery().next();
         }
+
+        return toReturn;
     }
 }

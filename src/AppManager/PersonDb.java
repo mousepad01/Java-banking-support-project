@@ -9,104 +9,110 @@ public class PersonDb {
 
     private void add(Person toAdd) throws SQLException {
 
-        try(Connection db = DbConfig.dbConnection()){
+        if(!isInDb(toAdd))
+            try(Connection db = DbConfig.dbConnection()){
 
-            String toExecute = "INSERT INTO person (id, name, surname, birthdate, address, email, phone) VALUES(?, ?, ?, ?, ?, ?, ?)";
+                String toExecute = "INSERT INTO person (id, name, surname, birthdate, address, email, phone) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
-            preparedStatement.setString(1, toAdd.getId());
-            preparedStatement.setString(2, toAdd.getName());
-            preparedStatement.setString(3, toAdd.getSurname());
-            preparedStatement.setDate(4, toAdd.getBirthDate());
-            preparedStatement.setString(5, toAdd.getAddress());
-            preparedStatement.setString(6, toAdd.getEmail());
-            preparedStatement.setString(7, toAdd.getPhoneNumber());
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+                preparedStatement.setString(1, toAdd.getId());
+                preparedStatement.setString(2, toAdd.getName());
+                preparedStatement.setString(3, toAdd.getSurname());
+                preparedStatement.setDate(4, toAdd.getBirthDate());
+                preparedStatement.setString(5, toAdd.getAddress());
+                preparedStatement.setString(6, toAdd.getEmail());
+                preparedStatement.setString(7, toAdd.getPhoneNumber());
 
-            preparedStatement.execute();
-        }
+                preparedStatement.execute();
+            }
     }
 
     protected void add(Employee toAdd) throws SQLException {
 
-        this.add((Person) toAdd);
+        if(!isInDb(toAdd)){
 
-        try(Connection db = DbConfig.dbConnection()){
+            this.add((Person) toAdd);
 
-            String toExecute = "INSERT INTO employee (id, hire_date, job, workplace, salary) VALUES(?, ?, ?, ?, ?)";
+            try(Connection db = DbConfig.dbConnection()){
 
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
-            preparedStatement.setString(1, toAdd.getId());
-            preparedStatement.setDate(2, toAdd.getHireDate());
-            preparedStatement.setString(3, toAdd.getJob());
-            preparedStatement.setString(4, toAdd.getWorkplace());
-            preparedStatement.setInt(5, toAdd.getSalary());
+                String toExecute = "INSERT INTO employee (id, hire_date, job, workplace, salary) VALUES(?, ?, ?, ?, ?)";
 
-            preparedStatement.execute();
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+                preparedStatement.setString(1, toAdd.getId());
+                preparedStatement.setDate(2, toAdd.getHireDate());
+                preparedStatement.setString(3, toAdd.getJob());
+                preparedStatement.setString(4, toAdd.getWorkplace());
+                preparedStatement.setInt(5, toAdd.getSalary());
+
+                preparedStatement.execute();
+            }
         }
     }
 
     protected void add(Client toAdd) throws SQLException {
 
-        this.add((Person) toAdd);
+        if(!isInDb(toAdd)){
 
-        try(Connection db = DbConfig.dbConnection()){
+            this.add((Person) toAdd);
 
-            String toExecute = "INSERT INTO client (id, registration_date) VALUES(?, ?)";
+            try(Connection db = DbConfig.dbConnection()){
 
-            PreparedStatement preparedStatement = db.prepareStatement(toExecute);
-            preparedStatement.setString(1, toAdd.getId());
-            preparedStatement.setDate(2, toAdd.getRegistrationDate());
+                String toExecute = "INSERT INTO client (id, registration_date) VALUES(?, ?)";
 
-            preparedStatement.execute();
+                PreparedStatement preparedStatement = db.prepareStatement(toExecute);
+                preparedStatement.setString(1, toAdd.getId());
+                preparedStatement.setDate(2, toAdd.getRegistrationDate());
 
-            AccountDb accountDb = new AccountDb();
+                preparedStatement.execute();
 
-            Iterator accIter = toAdd.getAllAccounts();
-            while(accIter.hasNext()){
+                /*AccountDb accountDb = new AccountDb();
 
-                Map.Entry entry = (Map.Entry) accIter.next();
-                Account acc = (Account) entry.getValue();
+                Iterator accIter = toAdd.getAllAccounts();
+                while(accIter.hasNext()){
 
-                if(acc instanceof DepotAccount)
-                    accountDb.add((DepotAccount) acc);
+                    Map.Entry entry = (Map.Entry) accIter.next();
+                    Account acc = (Account) entry.getValue();
 
-                else if(acc instanceof SavingsAccount)
-                    accountDb.add((SavingsAccount) acc);
+                    if(acc instanceof DepotAccount)
+                        accountDb.add((DepotAccount) acc);
 
-                else if(acc instanceof BasicAccount)
-                    accountDb.add((BasicAccount) acc);
+                    else if(acc instanceof SavingsAccount)
+                        accountDb.add((SavingsAccount) acc);
 
-                else if(acc instanceof CurrentAccount)
-                    accountDb.add((CurrentAccount) acc);
+                    else if(acc instanceof BasicAccount)
+                        accountDb.add((BasicAccount) acc);
+
+                    else if(acc instanceof CurrentAccount)
+                        accountDb.add((CurrentAccount) acc);
+                }
+
+                CardDb cardDb = new CardDb();
+
+                Iterator cardIter = toAdd.getAllCards();
+                while(cardIter.hasNext()){
+
+                    Map.Entry entry = (Map.Entry) cardIter.next();
+                    Card acc = (Card) entry.getValue();
+
+                    if(acc instanceof CreditCard)
+                        cardDb.add((CreditCard) acc);
+
+                    else if(acc instanceof DebitCard)
+                        cardDb.add((DebitCard) acc);
+                }
+
+                accIter = toAdd.getAllAccounts();
+                while(accIter.hasNext()){
+
+                    Map.Entry entry = (Map.Entry) accIter.next();
+                    Account acc = (Account) entry.getValue();
+
+                    if(acc instanceof AccountWithCard)
+                        accountDb.linkWithCard((AccountWithCard) acc);
+                }*/
+
             }
-
-            CardDb cardDb = new CardDb();
-
-            Iterator cardIter = toAdd.getAllCards();
-            while(cardIter.hasNext()){
-
-                Map.Entry entry = (Map.Entry) cardIter.next();
-                Card acc = (Card) entry.getValue();
-
-                if(acc instanceof CreditCard)
-                    cardDb.add((CreditCard) acc);
-
-                else if(acc instanceof DebitCard)
-                    cardDb.add((DebitCard) acc);
-            }
-
-            accIter = toAdd.getAllAccounts();
-            while(accIter.hasNext()){
-
-                Map.Entry entry = (Map.Entry) accIter.next();
-                Account acc = (Account) entry.getValue();
-
-                if(acc instanceof AccountWithCard)
-                    accountDb.linkWithCard((AccountWithCard) acc);
-            }
-
         }
-
     }
 
     protected void update(Person toUpdate) throws SQLException {
@@ -279,7 +285,7 @@ public class PersonDb {
 
             preparedStatement.setString(1, id);
 
-            ResultSet resultClient = preparedStatement.executeQuery(toExecute);
+            ResultSet resultClient = preparedStatement.executeQuery();
 
             if(resultClient.next()){
 
@@ -303,18 +309,22 @@ public class PersonDb {
 
     protected boolean isInDb(Person toSearch) throws SQLException {
 
+        boolean toReturn;
+
         try(Connection db = DbConfig.dbConnection()) {
 
             String toExecute = "SELECT p.id " +
-                                "FROM person p\n" +
+                                "FROM person p " +
                                 "WHERE p.id = ?;";
 
             PreparedStatement preparedStatement = db.prepareStatement(toExecute);
 
             preparedStatement.setString(1, toSearch.getId());
 
-            return preparedStatement.executeQuery(toExecute).next();
+            toReturn = preparedStatement.executeQuery().next();
         }
+
+        return toReturn;
     }
 }
 

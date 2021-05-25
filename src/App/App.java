@@ -25,14 +25,15 @@ public class App {
         DbManager dbManager = new DbManager(new Semaphore(0, true));
 
         mainDbManagerThread = new Thread(dbManager);
-        DbManager.threadDbManagers.put(new Pair(Thread.currentThread().getId(), mainDbManagerThread.getId()), dbManager);
+        DbManager.threadDbManagers.put(Thread.currentThread().getId(), new Pair(mainDbManagerThread.getId(), dbManager));
+        DbManager.threadDbManagers.put(mainDbManagerThread.getId(), new Pair(mainDbManagerThread.getId(), dbManager));
 
         mainDbManagerThread.start();
     }
 
     private static void disconnectDb() throws InterruptedException {
 
-        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId(), mainDbManagerThread.getId());
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
 
         if(dbManager != null){
 
@@ -52,12 +53,12 @@ public class App {
         initDb();
 
         Client client;
-        client = new Client("Aa", "Bb", "2000-12-29");
+        client = Client.newClient("Aa", "Bb", "2000-12-29");
 
         Employee emp;
-        emp = new Employee("Ff", "Bgb", "2001-11-27", "str 1", "a@y",
-                "0713444555", "1999-10-09", "INFORMATICIAN",
-                "REMOTE", 4000);
+        emp = Employee.newEmployee("Ff", "Bgb", "2001-11-27", "str 1", "a@y",
+                        "0713444555", "1999-10-09", "INFORMATICIAN",
+                            "REMOTE", 4000);
 
         DepotAccount depotAccount = client.createDepotAccount("cont de depozit", emp, "ONE MONTH", 1300);
         SavingsAccount savingsAccount = client.createSavingsAccount("cont de economii", emp);
@@ -68,11 +69,8 @@ public class App {
 
         DebitCard cardDebit = client.createDebitCard("cont curent", "card de debit", emp);
 
-        System.out.println(cardDebit.getBalance());
         cardDebit.add(1000);
         cardDebit.extract(200);
-
-        System.out.println(cont.getBalance());
 
         CreditCard cr = client.createCreditCard("card de credit", 1200, emp);
         CreditCard cr2 = client.createCreditCard("credit pt ceva", 3500, emp);
@@ -80,6 +78,10 @@ public class App {
         int pin = cr.initPin();
 
         AccountWithCard cont2 = client.createBasicAccount("cont de baza", emp);
+
+        client.deleteAccount("cont curent");
+
+        client.removeDebitCard("card de debit");
 
         /*System.out.println(client.getClientFunds());
         System.out.println(client.getCreditDebt());

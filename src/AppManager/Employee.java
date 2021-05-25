@@ -12,6 +12,18 @@ public class Employee extends Person {
     private String workplace;
     private int salary;
 
+    public static Employee newEmployee(String name, String surname, String birthDateStr, String address, String email,
+                                       String phoneNumber, String hireDateStr, String job, String workplace, int salary){
+
+        Employee toReturn = new Employee(name, surname, birthDateStr, address, email,
+                phoneNumber, hireDateStr, job, workplace, salary);
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(toReturn, 2);
+
+        return toReturn;
+    }
+
     protected Employee(String name, String surname, String birthDateStr, String address, String email,
                     String phoneNumber, String hireDateStr, String job, String workplace, String id, int salary) {
 
@@ -50,6 +62,9 @@ public class Employee extends Person {
 
     public void setJob(String job) {
         this.job = job;
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
     }
 
     public String getWorkplace() {
@@ -58,6 +73,9 @@ public class Employee extends Person {
 
     public void setWorkplace(String workplace) {
         this.workplace = workplace;
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
     }
 
     public int getSalary() {
@@ -66,6 +84,9 @@ public class Employee extends Person {
 
     public void setSalary(int salary) {
         this.salary = salary;
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
     }
 
     protected String getSerialization(){

@@ -118,14 +118,23 @@ public abstract class Person extends DbObject{
 
     public void setAddress(String address) {
         this.address = address;
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
     }
 
     public void setEmail(String email) {
         this.email = email;
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
     }
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
     }
 
     protected String getSerialization(){

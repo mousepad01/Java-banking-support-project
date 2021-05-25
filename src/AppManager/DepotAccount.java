@@ -82,6 +82,9 @@ public class DepotAccount extends Account{
 
         balance += val;
 
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
+
         return balance;
     }
 
@@ -99,6 +102,9 @@ public class DepotAccount extends Account{
             throw new RuntimeException("value is negative");
 
         balance -= val;
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
 
         return balance;
     }
@@ -127,6 +133,9 @@ public class DepotAccount extends Account{
         receiverAccount.add(toSend);
         this.balance -= toSend;
 
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
+
         return balance;
     }
 
@@ -147,6 +156,9 @@ public class DepotAccount extends Account{
             throw new RuntimeException("account is suspended");
 
         this.flags |= 2;
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
     }
 
     public void dropSuspendedInterest(){
@@ -155,6 +167,9 @@ public class DepotAccount extends Account{
             throw new RuntimeException("account is suspended");
 
         this.flags &= 0b11111101;
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
     }
 
     private void updateBalance(boolean modify){
@@ -181,6 +196,9 @@ public class DepotAccount extends Account{
         }
         else if (modify)
             suspendInterest();
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
     }
 
     protected String getSerialization(){
@@ -206,6 +224,9 @@ public class DepotAccount extends Account{
     public void suspendAccount(){
         updateBalance(false);
         this.flags |= 1;
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
     }
 
     @Override
@@ -217,6 +238,9 @@ public class DepotAccount extends Account{
 
             long lastUpdatedVal = currentTimeDays - ((currentTimeDays - lastUpdatedDays) % term);
             lastUpdatedTerm = new Date(lastUpdatedVal * MILISEC_TO_DAY);
+
+            DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+            dbManager.setChange(this, 1);
 
             return true;
         }
@@ -237,6 +261,9 @@ public class DepotAccount extends Account{
 
         }
         this.flags &= 0b11111110;
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
     }
 
     @Override

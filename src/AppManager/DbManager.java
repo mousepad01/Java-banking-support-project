@@ -143,12 +143,13 @@ public class DbManager implements Runnable{
         public DbObject ref;
     }
 
-    // (thread, thread db manager corespunzator) -> db manager corespunzator
-    public static final HashMap<Pair, DbManager> threadDbManagers;
+    // thread -> (db manager thread, db manager)
+    // caz particular: db manager thread -> (db manager thread (acelasi), db manager)
+    public static final HashMap<Long, Pair> threadDbManagers;
     private static final HashMap<String, LoadRef> loadedObjects;
 
-    public static DbManager getDbManger(Long currentThreadId, Long threadId){
-        return DbManager.threadDbManagers.get(new Pair(currentThreadId, threadId));
+    public static DbManager getDbManger(Long currentThreadId){
+        return (DbManager) DbManager.threadDbManagers.get(currentThreadId).snd;
     }
 
     static{
@@ -186,6 +187,12 @@ public class DbManager implements Runnable{
             loadedObjects.put(key, new LoadRef());
 
         return loadedObjects.get(key);
+    }
+
+    synchronized private void removeLoadedObj(String key){
+
+        if(loadedObjects.get(key) != null)
+            loadedObjects.remove(key);
     }
 
     // pentru load
@@ -235,8 +242,11 @@ public class DbManager implements Runnable{
             else if(toProcess.statusCode == 2)
                 this.accountDb.add(basicAccount);
 
-            else if(toProcess.statusCode == 3)
+            else if(toProcess.statusCode == 3) {
+
+                this.removeLoadedObj(basicAccount.getAccountId());
                 this.accountDb.delete(basicAccount);
+            }
         }
 
         else if(toProcess.dbObject instanceof CurrentAccount currentAccount){
@@ -247,8 +257,12 @@ public class DbManager implements Runnable{
             else if(toProcess.statusCode == 2)
                 this.accountDb.add(currentAccount);
 
-            else if(toProcess.statusCode == 3)
+            else if(toProcess.statusCode == 3){
+
+                this.removeLoadedObj(currentAccount.getAccountId());
                 this.accountDb.delete(currentAccount);
+            }
+
         }
 
         else if(toProcess.dbObject instanceof DepotAccount depotAccount){
@@ -259,8 +273,11 @@ public class DbManager implements Runnable{
             else if(toProcess.statusCode == 2)
                 this.accountDb.add(depotAccount);
 
-            else if(toProcess.statusCode == 3)
+            else if(toProcess.statusCode == 3) {
+
+                this.removeLoadedObj(depotAccount.getAccountId());
                 this.accountDb.delete(depotAccount);
+            }
         }
 
         else if(toProcess.dbObject instanceof SavingsAccount savingsAccount){
@@ -271,8 +288,11 @@ public class DbManager implements Runnable{
             else if(toProcess.statusCode == 2)
                 this.accountDb.add(savingsAccount);
 
-            else if(toProcess.statusCode == 3)
+            else if(toProcess.statusCode == 3) {
+
+                this.removeLoadedObj(savingsAccount.getAccountId());
                 this.accountDb.delete(savingsAccount);
+            }
         }
 
         else if(toProcess.dbObject instanceof CreditCard creditCard){
@@ -283,8 +303,11 @@ public class DbManager implements Runnable{
             else if(toProcess.statusCode == 2)
                 this.cardDb.add(creditCard);
 
-            else if(toProcess.statusCode == 3)
+            else if(toProcess.statusCode == 3) {
+
+                this.removeLoadedObj(creditCard.getCardId());
                 this.cardDb.delete(creditCard);
+            }
         }
 
         else if(toProcess.dbObject instanceof DebitCard debitCard){
@@ -295,8 +318,11 @@ public class DbManager implements Runnable{
             else if(toProcess.statusCode == 2)
                 this.cardDb.add(debitCard);
 
-            else if(toProcess.statusCode == 3)
+            else if(toProcess.statusCode == 3) {
+
+                this.removeLoadedObj(debitCard.getCardId());
                 this.cardDb.delete(debitCard);
+            }
         }
 
         else if(toProcess.statusCode == 4){
@@ -443,6 +469,7 @@ public class DbManager implements Runnable{
         catch (Exception err) {
             this.log.logMessage("Error while running main loop of DbManager thread " +
                                 Thread.currentThread().getId() + "(DbManager thread closed): " + err.getMessage());
+            err.printStackTrace();
         }
     }
 }

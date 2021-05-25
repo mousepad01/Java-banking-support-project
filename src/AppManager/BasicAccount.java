@@ -39,6 +39,10 @@ public class BasicAccount extends AccountWithCard {
             throw new RuntimeException("value is too big");
 
         this.balance += val;
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
+
         return this.balance;
     }
 
@@ -54,6 +58,10 @@ public class BasicAccount extends AccountWithCard {
             throw new RuntimeException("value is negative");
 
         this.balance -= val;
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
+
         return this.balance;
     }
 
@@ -84,6 +92,9 @@ public class BasicAccount extends AccountWithCard {
 
         receiverAccount.add(toSend);
         this.balance -= toSend * (1 + fee);
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
 
         return balance;
     }

@@ -46,6 +46,9 @@ public class CurrentAccount extends AccountWithCard{
             addFee = 0.01;
             extractFee = 0.05;
         }
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
     }
 
     public double add(double val){
@@ -127,15 +130,15 @@ public class CurrentAccount extends AccountWithCard{
         return serialization.toString();
     }
 
-    public double getTransactionFee(){
+    protected double getTransactionFee(){
         return this.transactionFee;
     }
 
-    public double getExtractFee(){
+    protected double getExtractFee(){
         return this.extractFee;
     }
 
-    public double getAddFee(){
+    protected double getAddFee(){
         return this.addFee;
     }
 

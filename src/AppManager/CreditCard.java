@@ -64,6 +64,10 @@ public class CreditCard extends Card{
             throw new RuntimeException("value is too big");
 
         creditAmount += val;
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
+
         return creditAmount;
     }
 
@@ -79,6 +83,10 @@ public class CreditCard extends Card{
             throw new RuntimeException("value is negative");
 
         creditAmount -= val;
+
+        DbManager dbManager = DbManager.getDbManger(Thread.currentThread().getId());
+        dbManager.setChange(this, 1);
+
         return creditAmount;
     }
 
